@@ -32,13 +32,13 @@ Instead, you read pixels from an image with a region. This is a rectangular
 sub-area of an image. In C, the API looks like:
 
 ```c
-VipsImage *image = vips_image_new_from_file( filename, NULL );
-VipsRegion *region = vips_region_new( image );
+VipsImage *image = vips_image_new_from_file(filename, NULL);
+VipsRegion *region = vips_region_new(image);
 
 // ask for a 100x100 pixel region at 0x0 (top left)
-VipsRect r = { left: 0, top: 0, width: 100, height: 100 };
-if( vips_region_prepare( region, &r ) ) 
-  vips_error( ... );
+VipsRect r = { .left = 0, .top = 0, .width = 100, .height = 100 };
+if (vips_region_prepare(region, &r))
+	vips_error(...);
 
 // get a pointer to the pixel at x, y, where x, y must
 // be within the region
@@ -49,13 +49,13 @@ if( vips_region_prepare( region, &r ) )
 // compile with -DDEBUG and the macro will check bounds for you
 
 // add VIPS_REGION_LSKIP() to move down a line
-VipsPel *pixel = VIPS_REGION_ADDR( region, x, y );
+VipsPel *pixel = VIPS_REGION_ADDR(region, x, y);
 
 // you can call vips_region_prepare() many times
 
-// everything in libvips is a GObject ... when you're done, 
+// everything in libvips is a GObject ... when you're done,
 // just free with
-g_object_unref( region );
+g_object_unref(region);
 ```
 
 The action that `vips_region_prepare()` takes varies with the type of
@@ -109,18 +109,18 @@ set of mechanisms to copy image areas by just adjusting pointers. Most of
 the time no actual copying is necessary and you can perform operations on
 large images at low cost.
 
-**Run-time code generation**
+**SIMD optimisations**
 
-VIPS uses 
-<ulink url="https://gstreamer.freedesktop.org/modules/orc.html">Orc</ulink>, a
-run-time compiler, to generate code for some operations. For example, to
-compute a convolution on an 8-bit image, VIPS will examine the convolution
-matrix and the source image and generate a tiny program to calculate the
-convolution. This program is then "compiled" to the vector instruction set
-for your CPU, for example SSE3 on most x86 processors.
+VIPS uses
+<ulink url="https://github.com/google/highway">Highway</ulink>, a
+C++ library, to optimise various operations with SIMD/vector
+instructions. These optimised code paths are flexible and can adapt to
+different instruction sets, including those with 'scalable' vectors
+(size unknown at compile time). At runtime, dynamic dispatch selects
+the best available implementation based on the processor's capabilities,
+ensuring optimal performance.
 
-Run-time vector code generation typically speeds operations up by a factor
-of three or four.
+SIMD typically speeds operations up by a factor of three or four.
 
 **Joining operations together**
 
@@ -229,7 +229,7 @@ time you call an operation, VIPS searches the cache for a previous call to
 the same operation with the same arguments. If it finds a match, you get
 the previous result again. This can give a huge speedup.
 
-By default, VIPS caches the last 1,000 operation calls. You can also control
+By default, VIPS caches the last 100 operation calls. You can also control
 the cache size by memory use or by files opened.
 
 (\* Some vips operations DO have side effects, for example,

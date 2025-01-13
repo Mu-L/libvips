@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- vim: set ts=2 sw=2 expandtab: --> 
+<!-- vim: set ts=2 sw=2 expandtab: -->
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
                "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
@@ -18,13 +18,13 @@
   <refsect3 id="function-list">
     <title>Function list</title>
     <para>
-      VIPS has a set of operators each of which computes some useful image 
-      processing operation. Each operator is 
-      implemented as a %GObject class, for example <code>VipsGamma</code>. 
-      Classes are identified by their unique <code>nickname</code>, in this 
-      case <code>gamma</code>. 
+      VIPS has a set of operators each of which computes some useful image
+      processing operation. Each operator is
+      implemented as a %GObject class, for example <code>VipsGamma</code>.
+      Classes are identified by their unique <code>nickname</code>, in this
+      case <code>gamma</code>.
 
-      From the command-line, C++ and most language bindings, you use the 
+      From the command-line, C++ and most language bindings, you use the
       nickname to call the operator. For example in C++:
 
 <programlisting language="C++">
@@ -38,7 +38,7 @@
   fred = jim.gamma()
 </programlisting>
 
-      VIPS has a set of C wrapper functions for calling operators, in this 
+      VIPS has a set of C wrapper functions for calling operators, in this
       case vips_gamma():
 
 <programlisting language="C">
@@ -46,15 +46,15 @@
   VipsImage *jim;
 
   if (vips_gamma(fred, &amp;jim, NULL))
-    ...error; 
+    ...error;
 </programlisting>
 
       Some operators have many C convenience functions.
     </para>
 
     <para>
-      This table lists all the VIPS operators with their C convenience 
-      functions and a short description. It's supposed to be useful for 
+      This table lists all the VIPS operators with their C convenience
+      functions and a short description. It's supposed to be useful for
       searching. See the API docs each function links to for more details.
     </para>
 
@@ -177,6 +177,11 @@
   <entry>vips_add()</entry>
 </row>
 <row>
+  <entry>addalpha</entry>
+  <entry>Append an alpha channel</entry>
+  <entry>vips_addalpha()</entry>
+</row>
+<row>
   <entry>affine</entry>
   <entry>Affine transform of an image</entry>
   <entry>vips_affine()</entry>
@@ -262,11 +267,6 @@
   <entry>vips_byteswap()</entry>
 </row>
 <row>
-  <entry>cache</entry>
-  <entry>Cache an image</entry>
-  <entry>vips_cache()</entry>
-</row>
-<row>
   <entry>canny</entry>
   <entry>Canny edge detector</entry>
   <entry>vips_canny()</entry>
@@ -280,6 +280,11 @@
   <entry>cast</entry>
   <entry>Cast an image</entry>
   <entry>vips_cast(), vips_cast_uchar(), vips_cast_char(), vips_cast_ushort(), vips_cast_shortcast_uint(), vips_cast_int(), vips_cast_float(), vips_cast_double(), vips_cast_complex(), vips_cast_dpcomplex()</entry>
+</row>
+<row>
+  <entry>clamp</entry>
+  <entry>Clamp values of an image</entry>
+  <entry>vips_clamp()</entry>
 </row>
 <row>
   <entry>colourspace</entry>
@@ -348,7 +353,7 @@
 </row>
 <row>
   <entry>convsep</entry>
-  <entry>Seperable convolution operation</entry>
+  <entry>Separable convolution operation</entry>
   <entry>vips_convsep()</entry>
 </row>
 <row>
@@ -450,6 +455,11 @@
   <entry>dzsave_buffer</entry>
   <entry>Save image to dz buffer</entry>
   <entry>vips_dzsave_buffer()</entry>
+</row>
+<row>
+  <entry>dzsave_target</entry>
+  <entry>Save image to deepzoom target</entry>
+  <entry>vips_dzsave_target()</entry>
 </row>
 <row>
   <entry>embed</entry>
@@ -1012,6 +1022,11 @@
   <entry>vips_max()</entry>
 </row>
 <row>
+  <entry>maxpair</entry>
+  <entry>Maximum of a pair of images</entry>
+  <entry>vips_maxpair()</entry>
+</row>
+<row>
   <entry>measure</entry>
   <entry>Measure a set of patches on a color chart</entry>
   <entry>vips_measure()</entry>
@@ -1025,6 +1040,11 @@
   <entry>min</entry>
   <entry>Find image minimum</entry>
   <entry>vips_min()</entry>
+</row>
+<row>
+  <entry>minpair</entry>
+  <entry>Minimum of a pair of images</entry>
+  <entry>vips_minpair()</entry>
 </row>
 <row>
   <entry>morph</entry>
@@ -1128,12 +1148,12 @@
 </row>
 <row>
   <entry>pngsave</entry>
-  <entry>Save image to png file</entry>
+  <entry>Save image to file as png</entry>
   <entry>vips_pngsave()</entry>
 </row>
 <row>
   <entry>pngsave_buffer</entry>
-  <entry>Save image to png buffer</entry>
+  <entry>Save image to buffer as png</entry>
   <entry>vips_pngsave_buffer()</entry>
 </row>
 <row>
@@ -1165,6 +1185,11 @@
   <entry>premultiply</entry>
   <entry>Premultiply image alpha</entry>
   <entry>vips_premultiply()</entry>
+</row>
+<row>
+  <entry>prewitt</entry>
+  <entry>Prewitt edge detector</entry>
+  <entry>vips_prewitt()</entry>
 </row>
 <row>
   <entry>profile</entry>
@@ -1237,9 +1262,14 @@
   <entry>vips_rawsave()</entry>
 </row>
 <row>
-  <entry>rawsave_fd</entry>
-  <entry>Write raw image to file descriptor</entry>
-  <entry>vips_rawsave_fd()</entry>
+  <entry>rawsave_buffer</entry>
+  <entry>Write raw image to buffer</entry>
+  <entry>vips_rawsave_buffer()</entry>
+</row>
+<row>
+  <entry>rawsave_target</entry>
+  <entry>Write raw image to target</entry>
+  <entry>vips_rawsave_target()</entry>
 </row>
 <row>
   <entry>recomb</entry>
@@ -1340,6 +1370,16 @@
   <entry>scale</entry>
   <entry>Scale an image to uchar</entry>
   <entry>vips_scale()</entry>
+</row>
+<row>
+  <entry>scharr</entry>
+  <entry>Scharr edge detector</entry>
+  <entry>vips_scharr()</entry>
+</row>
+<row>
+  <entry>sdf</entry>
+  <entry>Create an sdf image</entry>
+  <entry>vips_sdf()</entry>
 </row>
 <row>
   <entry>sequential</entry>
@@ -1502,6 +1542,11 @@
   <entry>vips_tiffsave_buffer()</entry>
 </row>
 <row>
+  <entry>tiffsave_target</entry>
+  <entry>Save image to tiff target</entry>
+  <entry>vips_tiffsave_target()</entry>
+</row>
+<row>
   <entry>tilecache</entry>
   <entry>Cache an image as a set of tiles</entry>
   <entry>vips_tilecache()</entry>
@@ -1558,17 +1603,22 @@
 </row>
 <row>
   <entry>webpsave</entry>
-  <entry>Save image to webp file</entry>
+  <entry>Save as webp</entry>
   <entry>vips_webpsave()</entry>
 </row>
 <row>
   <entry>webpsave_buffer</entry>
-  <entry>Save image to webp buffer</entry>
+  <entry>Save as webp</entry>
   <entry>vips_webpsave_buffer()</entry>
 </row>
 <row>
+  <entry>webpsave_mime</entry>
+  <entry>Save image to webp mime</entry>
+  <entry>vips_webpsave_mime()</entry>
+</row>
+<row>
   <entry>webpsave_target</entry>
-  <entry>Save image to webp target</entry>
+  <entry>Save as webp</entry>
   <entry>vips_webpsave_target()</entry>
 </row>
 <row>

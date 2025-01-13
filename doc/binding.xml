@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
                   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<refentry id="binding.md">
+<refentry id="binding">
 
 
 <para>
@@ -59,81 +59,81 @@
 #include &lt;vips/vips.h&gt;
 
 int
-main( int argc, char **argv )
+main(int argc, char **argv)
 {
     VipsImage *in;
     VipsImage *out;
     VipsOperation *op;
     VipsOperation *new_op;
-    GValue gvalue = { 0 };
+    GValue gvalue = G_VALUE_INIT;
 
-    if( VIPS_INIT( argv[0] ) ) 
+    if (VIPS_INIT(argv[0]))
         /* This shows the vips error buffer and quits with a fail exit
          * code.
          */
-        vips_error_exit( NULL ); 
+        vips_error_exit(NULL);
 
     /* This will print a table of any ref leaks on exit, very handy for
      * development.
      */
-    vips_leak_set( TRUE );
+    vips_leak_set(TRUE);
 
-    if( argc != 3 )
-        vips_error_exit( &quot;usage: %s input-filename output-filename&quot;, 
-            argv[0] );
+    if (argc != 3)
+        vips_error_exit(&quot;usage: %s input-filename output-filename&quot;,
+            argv[0]);
 
-    if( !(in = vips_image_new_from_file( argv[1], NULL )) )
-        vips_error_exit( NULL ); 
+    if (!(in = vips_image_new_from_file(argv[1], NULL)))
+        vips_error_exit(NULL);
 
     /* Create a new operator from a nickname. NULL for unknown operator.
      */
-    op = vips_operation_new( &quot;invert&quot; );
+    op = vips_operation_new(&quot;invert&quot;);
 
     /* Init a gvalue as an image, set it to in, use the gvalue to set the
      * operator property.
      */
-    g_value_init( &amp;gvalue, VIPS_TYPE_IMAGE );
-    g_value_set_object( &amp;gvalue, in );
-    g_object_set_property( G_OBJECT( op ), &quot;in&quot;, &amp;gvalue );
-    g_value_unset( &amp;gvalue );
+    g_value_init(&amp;gvalue, VIPS_TYPE_IMAGE);
+    g_value_set_object(&amp;gvalue, in);
+    g_object_set_property(G_OBJECT(op), &quot;in&quot;, &amp;gvalue);
+    g_value_unset(&amp;gvalue);
 
     /* We no longer need in: op will hold a ref to it as long as it needs
-     * it. 
+     * it.
      */
-    g_object_unref( in ); 
+    g_object_unref(in);
 
     /* Call the operation. This will look up the operation+args in the vips
      * operation cache and either return a previous operation, or build
      * this one. In either case, we have a new ref we must release.
      */
-    if( !(new_op = vips_cache_operation_build( op )) ) {
-        g_object_unref( op );
-        vips_error_exit( NULL ); 
+    if (!(new_op = vips_cache_operation_build(op))) {
+        g_object_unref(op);
+        vips_error_exit(NULL);
     }
-    g_object_unref( op );
+    g_object_unref(op);
     op = new_op;
 
     /* Now get the result from op. g_value_get_object() does not ref the
      * object, so we need to make a ref for out to hold.
      */
-    g_value_init( &amp;gvalue, VIPS_TYPE_IMAGE );
-    g_object_get_property( G_OBJECT( op ), &quot;out&quot;, &amp;gvalue );
-    out = VIPS_IMAGE( g_value_get_object( &amp;gvalue ) );
-    g_object_ref( out ); 
-    g_value_unset( &amp;gvalue );
+    g_value_init(&amp;gvalue, VIPS_TYPE_IMAGE);
+    g_object_get_property(G_OBJECT(op), &quot;out&quot;, &amp;gvalue);
+    out = VIPS_IMAGE(g_value_get_object(&amp;gvalue));
+    g_object_ref(out);
+    g_value_unset(&amp;gvalue);
 
     /* All done: we can unref op. The output objects from op actually hold
-     * refs back to it, so before we can unref op, we must unref them. 
+     * refs back to it, so before we can unref op, we must unref them.
      */
-    vips_object_unref_outputs( VIPS_OBJECT( op ) ); 
-    g_object_unref( op );
+    vips_object_unref_outputs(VIPS_OBJECT(op));
+    g_object_unref(op);
 
-    if( vips_image_write_to_file( out, argv[2], NULL ) )
-        vips_error_exit( NULL ); 
+    if (vips_image_write_to_file(out, argv[2], NULL))
+        vips_error_exit(NULL);
 
-    g_object_unref( out );
+    g_object_unref(out);
 
-    return( 0 ); 
+    return 0;
 }
 </programlisting>
 </refsect3>
@@ -146,15 +146,16 @@ main( int argc, char **argv )
     A small Python program walks the set of all libvips operators and generates a set of static bindings. For example:
   </para>
   <programlisting language="c++">
-VImage VImage::invert( VOption *options )
+VImage
+VImage::invert(VOption *options) const
 {
     VImage out;
 
-    call( &quot;invert&quot;, (options ? options : VImage::option()) -&gt;
-        set( &quot;in&quot;, *this ) -&gt;
-        set( &quot;out&quot;, &amp;out ) );
+    call(&quot;invert&quot;, (options ? options : VImage::option())
+            -&gt;set(&quot;in&quot;, *this)
+            -&gt;set(&quot;out&quot;, &amp;out));
 
-    return( out );
+    return out;
 }
 </programlisting>
   <para>
@@ -173,12 +174,6 @@ VImage VImage::invert( VOption *options )
     Since these languages are dynamic, they can add another trick: they intercept the method-missing hook and attempt to run any method calls not implemented by the <literal>Image</literal> class as libvips operators. In effect, the binding is generated at runtime.
   </para>
 </refsect3>
-<refsect3 xml:id="dynamic-langauge-without-ffi">
-  <title>Dynamic langauge without FFI</title>
-  <para>
-    PHP does not have a useful FFI, unfortunately, so for this language a small C module implements the general <literal>vips_call()</literal> function for PHP language types, and a larger pure PHP layer makes it convenient to use.
-  </para>
-</refsect3>
 <refsect3 xml:id="gobject-introspection">
   <title>gobject-introspection</title>
   <para>
@@ -191,7 +186,7 @@ from gi.repository import Vips
     You can now use all of the libvips introspection machinery, as noted above.
   </para>
   <para>
-    Unfortunately g-o-i has some strong disadvantages. It is not very portable, since you will need a g-o-i layer for whatever platform you are targetting; it does not cross-compile well, since typelibs include a lot of very-low level data (such as exact structure layouts); and installation for your users is likely to be tricky.
+    Unfortunately g-o-i has some strong disadvantages. It is not very portable, since you will need a g-o-i layer for whatever platform you are targeting; it does not cross-compile well, since typelibs include a lot of very-low level data (such as exact structure layouts); and installation for your users is likely to be tricky.
   </para>
   <para>
     If you have a choice, I would recommend simply using FFI.
@@ -202,20 +197,20 @@ from gi.repository import Vips
   <para>
     You can generate searchable docs from a <code>.gir</code> (the thing that is built from scanning libvips and which in turn turn the typelib is made from) with <command>g-ir-doc-tool</command>, for example:
   </para>
-  <programlisting>
+  <programlisting language="bash">
 $ g-ir-doc-tool --language=Python -o ~/mydocs Vips-8.0.gir
 </programlisting>
   <para>
     Then to view them, either:
   </para>
-  <programlisting>
-$ yelp ~/mydocs 
+  <programlisting language="bash">
+$ yelp ~/mydocs
 </programlisting>
   <para>
     Or perhaps:
   </para>
-  <programlisting>
-$ cd ~/mydocs 
+  <programlisting language="bash">
+$ cd ~/mydocs
 $ yelp-build html .
 </programlisting>
   <para>

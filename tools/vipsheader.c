@@ -1,6 +1,6 @@
 /* @(#) Command; reads the header of a Vasari picture file.
  * @(#) Usage: header vasari_file
- * @(#) 
+ * @(#)
  *
  * Copyright: Birkbeck College, History of Art Dept, London, VASARI project.
  *
@@ -8,7 +8,7 @@
  * Written on: 17/01/1990
  * Modified on : 17/04/1990, 2/6/93 K.Martinez
  * 16/6/93 JC
- *	- now calls im_mmapin instead of bizzare bogosity
+ *	- now calls im_mmapin instead of bizarre bogosity
  * 1/6/95 JC
  *	- extra field argument for testing particular bits of the header
  * 29/10/98 JC
@@ -23,7 +23,7 @@
  * 	- back to plain im_open() now that's lazy enough for us
  * 9/9/05
  * 	- display meta fields in save format, if possible
- * 20/9/05 
+ * 20/9/05
  * 	- new field name "getext" reads extension block
  * 24/8/06
  *	- use GOption, loop over args
@@ -44,28 +44,28 @@
 
 /*
 
-    This file is part of VIPS.
-    
-    VIPS is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+	This file is part of VIPS.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	VIPS is free software; you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-    02110-1301  USA
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
+
+	You should have received a copy of the GNU Lesser General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+	02110-1301  USA
 
  */
 
 /*
 
-    These files are distributed with VIPS - http://www.vips.ecs.soton.ac.uk
+	These files are distributed with VIPS - http://www.vips.ecs.soton.ac.uk
 
  */
 
@@ -82,92 +82,112 @@
 #include <vips/internal.h>
 #include <vips/debug.h>
 
-static char *main_option_field = NULL;
+static GSList *main_option_fields = NULL;
 static gboolean main_option_all = FALSE;
 static gboolean version = FALSE;
 
+static gboolean
+main_option_field(const gchar *option_name, const gchar *value,
+	gpointer data, GError **error)
+{
+	if (value)
+		main_option_fields = g_slist_append(main_option_fields,
+			(void *) g_strdup(value));
+
+	return TRUE;
+}
+
 static GOptionEntry main_option[] = {
-	{ "all", 'a', 0, G_OPTION_ARG_NONE, &main_option_all, 
-		N_( "show all fields" ), NULL },
-	{ "field", 'f', 0, G_OPTION_ARG_STRING, &main_option_field, 
-		N_( "print value of FIELD (\"getext\" reads extension block, "
-			"\"Hist\" reads image history)" ),
+	{ "all", 'a', 0, G_OPTION_ARG_NONE, &main_option_all,
+		N_("show all fields"), NULL },
+	{ "field", 'f', 0, G_OPTION_ARG_CALLBACK,
+		(GOptionArgFunc) main_option_field,
+		N_("print value of FIELD (\"getext\" reads extension block, "
+		   "\"Hist\" reads image history)"),
 		"FIELD" },
-	{ "version", 'v', 0, G_OPTION_ARG_NONE, &version, 
-		N_( "print version" ), NULL },
+	{ "version", 'v', 0, G_OPTION_ARG_NONE, &version,
+		N_("print version"), NULL },
 	{ NULL }
 };
 
-/* A non-fatal error. Print the vips error buffer and continue.
- */
-static void
-print_error( void )
+
+// complete dump of a field with "-f"
+static void *
+dump_field(void *data, void *a, void *b)
 {
-        fprintf( stderr, "%s: %s", g_get_prgname(), vips_error_buffer() );
-	vips_error_clear();
+	const char *field = (const char *) data;
+	VipsImage *image = VIPS_IMAGE(a);
+
+	if (g_str_equal(field, "getext")) {
+		if (vips__has_extension_block(image)) {
+			void *buf;
+			size_t size;
+
+			if (!(buf = vips__read_extension_block(image, &size)))
+				vips_error_exit(NULL);
+			else {
+				printf("%s", (char *) buf);
+				g_free(buf);
+			}
+		}
+	}
+	else if (g_str_equal(field, "Hist"))
+		printf("%s", vips_image_get_history(image));
+	else {
+		char *str;
+
+		if (vips_image_get_as_string(image, field, &str))
+			vips_error_exit(NULL);
+		else {
+			printf("%s\n", str);
+			g_free(str);
+		}
+	}
+
+	return NULL;
 }
 
 static void *
-print_field_fn( VipsImage *image, const char *field, GValue *value, void *a )
+print_field_fn(VipsImage *image, const char *field, GValue *value, void *a)
 {
 	gboolean *many = (gboolean *) a;
 	char str[256];
-	VipsBuf buf = VIPS_BUF_STATIC( str );
+	VipsBuf buf = VIPS_BUF_STATIC(str);
 
-	if( *many &&
-		image->filename )
-		printf( "%s: ", image->filename );
+	if (*many &&
+		image->filename)
+		printf("%s: ", image->filename);
 
-	printf( "%s: ", field ); 
+	printf("%s: ", field);
 
-	vips_buf_appendgv( &buf, value );
-	printf( "%s\n", vips_buf_all( &buf ) );
+	vips_buf_appendgv(&buf, value);
+	printf("%s\n", vips_buf_all(&buf));
 
-	return( NULL );
+	return NULL;
 }
 
 /* Print header, or parts of header.
  */
 static int
-print_header( VipsImage *image, gboolean many )
+print_header(VipsImage *image, gboolean many)
 {
-	if( !main_option_field ) {
-		if( image->filename )
-			printf( "%s: ", image->filename );
-
-		vips_object_print_summary( VIPS_OBJECT( image ) );
-
-		if( main_option_all )
-			(void) vips_image_map( image, print_field_fn, &many );
-	}
-	else if( strcmp( main_option_field, "getext" ) == 0 ) {
-		if( vips__has_extension_block( image ) ) {
-			void *buf;
-			int size;
-
-			if( !(buf = 
-				vips__read_extension_block( image, &size )) )
-				return( -1 );
-			printf( "%s", (char *) buf );
-			g_free( buf );
-		}
-	}
-	else if( strcmp( main_option_field, "Hist" ) == 0 ) 
-		printf( "%s", vips_image_get_history( image ) );
+	if (main_option_fields)
+		vips_slist_map2(main_option_fields, dump_field, image, NULL);
 	else {
-		char *str;
+		if (image->filename)
+			printf("%s: ", image->filename);
 
-		if( vips_image_get_as_string( image, main_option_field, &str ) )
-			return( -1 );
-		printf( "%s\n", str );
-		g_free( str );
+		vips_object_print_summary(VIPS_OBJECT(image));
+
+		if (main_option_all)
+			(void) vips_image_map(image, print_field_fn, &many);
 	}
 
-	return( 0 );
+	return 0;
 }
 
 int
-main( int argc, char *argv[] )
+main(int argc, char *argv[])
 {
 	GOptionContext *context;
 	GOptionGroup *main_group;
@@ -175,21 +195,21 @@ main( int argc, char *argv[] )
 	int i;
 	int result;
 
-	if( VIPS_INIT( argv[0] ) )
-	        vips_error_exit( "unable to start VIPS" );
+	if (VIPS_INIT(argv[0]))
+		vips_error_exit("unable to start VIPS");
 
 #ifdef ENABLE_NLS
-	textdomain( GETTEXT_PACKAGE );
+	textdomain(GETTEXT_PACKAGE);
 #endif /* ENABLE_NLS */
-	setlocale( LC_ALL, "" );
+	setlocale(LC_ALL, "");
 
-{
-	char *basename;
+	{
+		char *basename;
 
-	basename = g_path_get_basename( argv[0] );
-	g_set_prgname( basename );
-	g_free( basename );
-}
+		basename = g_path_get_basename(argv[0]);
+		g_set_prgname(basename);
+		g_free(basename);
+	}
 
 	/* On Windows, argv is ascii-only .. use this to get a utf-8 version of
 	 * the args.
@@ -198,77 +218,74 @@ main( int argc, char *argv[] )
 	argv = g_win32_get_command_line();
 #endif /*G_OS_WIN32*/
 
-        context = g_option_context_new( _( "- print image header" ) );
-	main_group = g_option_group_new( NULL, NULL, NULL, NULL, NULL );
-	g_option_group_add_entries( main_group, main_option );
-	vips_add_option_entries( main_group ); 
-	g_option_group_set_translation_domain( main_group, GETTEXT_PACKAGE );
-	g_option_context_set_main_group( context, main_group );
+	context = g_option_context_new(_("- print image header"));
+	main_group = g_option_group_new(NULL, NULL, NULL, NULL, NULL);
+	g_option_group_add_entries(main_group, main_option);
+	vips_add_option_entries(main_group);
+	g_option_group_set_translation_domain(main_group, GETTEXT_PACKAGE);
+	g_option_context_set_main_group(context, main_group);
 
 #ifdef G_OS_WIN32
-	if( !g_option_context_parse_strv( context, &argv, &error ) ) 
-#else /*!G_OS_WIN32*/
-	if( !g_option_context_parse( context, &argc, &argv, &error ) ) 
+	if (!g_option_context_parse_strv(context, &argv, &error))
+#else  /*!G_OS_WIN32*/
+	if (!g_option_context_parse(context, &argc, &argv, &error))
 #endif /*G_OS_WIN32*/
 	{
-		if( error ) {
-			fprintf( stderr, "%s\n", error->message );
-			g_error_free( error );
+		if (error) {
+			fprintf(stderr, "%s\n", error->message);
+			g_error_free(error);
 		}
 
-		vips_error_exit( "try \"%s --help\"", g_get_prgname() );
+		vips_error_exit("try \"%s --help\"", g_get_prgname());
 	}
 
-	g_option_context_free( context );
+	g_option_context_free(context);
 
-	if( version ) 
-		printf( "vips-%s\n", vips_version_string() );
+	if (version)
+		printf("vips-%s\n", vips_version_string());
 
 	result = 0;
 
-	for( i = 1; argv[i]; i++ ) {
-		VipsImage *image;
+	for (i = 1; argv[i]; i++) {
+		VipsImage *image = NULL;
 		char filename[VIPS_PATH_MAX];
-                char option_string[VIPS_PATH_MAX];
+		char option_string[VIPS_PATH_MAX];
 
-		vips__filename_split8( argv[i], filename, option_string );
-		if( strcmp( filename, "stdin" ) == 0 ) {
+		vips__filename_split8(argv[i], filename, option_string);
+		if (g_str_equal(filename, "stdin")) {
 			VipsSource *source;
 
-                        if( !(source = vips_source_new_from_descriptor( 0 )) )
-                                return( -1 );
-                        if( !(image = vips_image_new_from_source( source,
-                                option_string, NULL )) ) {
-                                VIPS_UNREF( source );
-                                return( -1 );
-                        }
-                        VIPS_UNREF( source );
+			if (!(source = vips_source_new_from_descriptor(0)) ||
+				!(image = vips_image_new_from_source(source,
+				option_string, NULL)))
+				result = 1;
+
+			VIPS_UNREF(source);
 		}
 		else {
-			if( !(image = 
-				vips_image_new_from_file( argv[i], NULL )) ) {
-				print_error();
+			if (!(image = vips_image_new_from_file(argv[i], NULL)))
 				result = 1;
-			}
 		}
 
-		if( image && 
-			print_header( image, argv[2] != NULL ) ) {
-			print_error();
+		if (image &&
+			print_header(image, argv[2] != NULL))
 			result = 1;
-		}
 
-		if( image )
-			g_object_unref( image );
+		VIPS_UNREF(image);
+	}
+
+	if (result) {
+		fprintf(stderr, "%s: %s", g_get_prgname(), vips_error_buffer());
+		vips_error_clear();
 	}
 
 	/* We don't free this on error exit, sadly.
 	 */
 #ifdef G_OS_WIN32
-	g_strfreev( argv ); 
+	g_strfreev(argv);
 #endif /*G_OS_WIN32*/
 
 	vips_shutdown();
 
-	return( result );
+	return result;
 }

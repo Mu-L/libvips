@@ -1,12 +1,13 @@
 convolution_sources = files(
     'canny.c',
-    'sobel.c',
+    'edge.c',
     'convolution.c',
     'correlation.c',
     'conv.c',
     'conva.c',
     'convf.c',
     'convi.c',
+    'convi_hwy.cpp',
     'convasep.c',
     'convsep.c',
     'compass.c',
@@ -22,7 +23,6 @@ convolution_headers = files(
 )
 
 libvips_sources += convolution_sources
-
 
 convolution_lib = static_library('convolution',
     convolution_sources,

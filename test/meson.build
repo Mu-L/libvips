@@ -1,6 +1,6 @@
 variables_data = configuration_data()
-variables_data.set('abs_top_srcdir', meson.project_source_root())
-variables_data.set('abs_top_builddir', meson.project_build_root())
+variables_data.set('abs_top_srcdir', project_source_root)
+variables_data.set('abs_top_builddir', project_build_root)
 variables_data.set('PYTHON', pymod.find_installation().full_path())
 
 variables_sh = configure_file(
@@ -15,6 +15,7 @@ script_tests = [
     'seq',
     'stall',
     'threading',
+    'keep'
 ]
 
 foreach script_test : script_tests
@@ -26,6 +27,23 @@ foreach script_test : script_tests
         timeout: 120,
     )
 endforeach
+
+test_token = executable('test_token',
+    'test_token.c',
+    dependencies: libvips_dep,
+)
+
+test_token_sh = configure_file(
+    input: 'test_token.sh',
+    output: 'test_token.sh',
+    copy: true,
+)
+
+test('token',
+    test_token_sh,
+    depends: test_token,
+    workdir: meson.current_build_dir(),
+)
 
 test_connections = executable('test_connections',
     'test_connections.c',
@@ -58,5 +76,27 @@ test_descriptors_sh = configure_file(
 test('descriptors',
     test_descriptors_sh,
     depends: test_descriptors,
+    workdir: meson.current_build_dir(),
+)
+
+test_timeout_webpsave = executable('test_timeout_webpsave',
+    'test_timeout_webpsave.c',
+    dependencies: libvips_dep,
+)
+
+test('webpsave_timeout',
+    test_timeout_webpsave,
+    depends: test_timeout_webpsave,
+    workdir: meson.current_build_dir(),
+)
+
+test_timeout_gifsave = executable('test_timeout_gifsave',
+    'test_timeout_gifsave.c',
+    dependencies: libvips_dep,
+)
+
+test('gifsave_timeout',
+    test_timeout_gifsave,
+    depends: test_timeout_gifsave,
     workdir: meson.current_build_dir(),
 )

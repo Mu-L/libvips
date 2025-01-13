@@ -7,48 +7,13 @@
 
 . ./variables.sh
 
-# verify that the version number on the wrapper script is correct
-version=$($vips --version)
-major=$(echo $version | cut -b6- | cut -d. -f1)
-minor=$(echo $version | cut -b6- | cut -d. -f2)
-if ! test -f $top_srcdir/tools/vips-$major.$minor; then
-	echo version number in vips wrapper is not correct
-	exit 1
-fi
-
-# is a difference beyond a threshold? return 0 (meaning all ok) or 1 (meaning
-# error, or outside threshold)
-# 
-# use bc since bash does not support fp math
-break_threshold() {
-	diff=$1
-	threshold=$2
-	return $(echo "$diff <= $threshold" | bc -l)
-}
-
-# subtract, look for max difference less than a threshold
-test_difference() {
-	before=$1
-	after=$2
-	threshold=$3
-
-	$vips subtract $before $after $tmp/difference.v
-	$vips abs $tmp/difference.v $tmp/abs.v 
-	dif=$($vips max $tmp/abs.v)
-
-	if break_threshold $dif $threshold; then
-		echo "difference is $dif"
-		exit 1
-	fi
-}
-
 test_rotate() {
 	im=$1
 	inter=$2
 
 	printf "testing $inter ... "
 
-	# 90 degree clockwise rotate 
+	# 90 degree clockwise rotate
 	trn="0 1 1 0"
 
 	$vips affine $im $tmp/t1.v "$trn" --interpolate $inter
@@ -116,3 +81,24 @@ test_size $tmp/t1.jpg 66 100
 cat $image | $vipsthumbnail stdin -s 100 -o .jpg | cat > $tmp/t1.jpg
 echo ok
 test_size $tmp/t1.jpg 66 100
+
+# test max-coord
+# this will coredumop on an assert fail in debug builds, so block coredumps
+ulimit -c 0
+echo -n "testing --vips-max-coord ... "
+if $vips black $tmp/t1.v 1000 1000 --vips-max-coord 120 > /dev/null 2>&1; then
+  echo "FAIL"
+  echo "--vips-max-coord CLI arg test failed"
+  exit 1
+fi
+echo ok
+
+echo -n "testing VIPS_MAX_COORD ... "
+export VIPS_MAX_COORD=120
+if $vips black $tmp/t1.v 1000 1000 > /dev/null 2>&1; then
+  echo "FAIL"
+  echo "VIPS_MAX_COORD env var test failed"
+  exit 1
+fi
+echo ok
+unset VIPS_MAX_COORD

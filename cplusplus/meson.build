@@ -9,6 +9,7 @@ libvips_cpp_lib = library('vips-cpp',
     dependencies: libvips_dep,
     include_directories: libvips_cpp_includedir,
     version: library_version,
+    darwin_versions: darwin_versions,
     gnu_symbol_visibility: 'hidden',
     install: true,
 )
@@ -35,7 +36,7 @@ custom_target('vips-operators-header',
 custom_target('vips-operators-source',
     command: [ 'gen-operators.py', '-g', 'cpp'],
     capture: true,
-    output: 'vips-operators.cc'
+    output: 'vips-operators.cpp'
 )
 
 if get_option('doxygen')
@@ -43,8 +44,7 @@ if get_option('doxygen')
     doxygen_data = configuration_data()
     doxygen_data.set('VIPS_MAJOR_VERSION', version_major)
     doxygen_data.set('VIPS_MINOR_VERSION', version_minor)
-    doxygen_data.set('DOXY_INPUT_DIRECTORY', 
-      join_paths(meson.source_root(), meson.current_source_dir()))
+    doxygen_data.set('DOXY_INPUT_DIRECTORY', meson.current_source_dir())
     doxygen_data.set('DOXY_OUTPUT_DIRECTORY', 'cplusplus')
 
     doxyfile = configure_file(

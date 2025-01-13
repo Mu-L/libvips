@@ -2,7 +2,7 @@
 import pytest
 
 import pyvips
-from helpers import assert_almost_equal_objects
+from helpers import *
 
 
 class TestCreate:
@@ -72,8 +72,7 @@ class TestCreate:
         assert im.max() == 255.0
         assert im.min() == 0.0
 
-    @pytest.mark.skipif(pyvips.type_find("VipsOperation", "fwfft") == 0,
-                        reason="no FFTW, skipping test")
+    @skip_if_no("fwfft")
     def test_fractsurf(self):
         im = pyvips.Image.fractsurf(100, 90, 2.5)
         assert im.width == 100
@@ -400,22 +399,26 @@ class TestCreate:
         assert im.bands == 1
         assert im.format == pyvips.BandFormat.FLOAT
 
-    @pytest.mark.skipif(pyvips.type_find("VipsOperation", "text") == 0,
-                        reason="no text, skipping test")
+    @skip_if_no("text")
     def test_text(self):
-        im = pyvips.Image.text("Hello, world!")
+        im = pyvips.Image.text("Hello, world!", dpi=300)
         assert im.width > 10
         assert im.height > 10
         assert im.bands == 1
         assert im.format == pyvips.BandFormat.UCHAR
-        assert im.max() == 255
+        assert im.max() > 240
         assert im.min() == 0
 
         # test autofit
         im = pyvips.Image.text("Hello, world!", width=500, height=500)
-        # quite a large threshold, since we need to work with a huge range of 
+        # quite a large threshold, since we need to work with a huge range of
         # text rendering systems
         assert abs(im.width - 500) < 50
+
+        # test wrap
+        im1 = pyvips.Image.text("helloworld", width=100, dpi=500)
+        im2 = pyvips.Image.text("helloworld", width=100, dpi=500, wrap="char")
+        assert im1.width > im2.width
 
     def test_tonelut(self):
         im = pyvips.Image.tonelut()
@@ -434,6 +437,42 @@ class TestCreate:
         p = im(45, 35)
         assert_almost_equal_objects(p, [45, 35])
 
+    def test_sdf(self):
+        im = pyvips.Image.sdf(128, 128, "circle", a=[64, 64], r=32)
+        assert im.bands == 1
+        assert im.format == pyvips.BandFormat.FLOAT
+        assert im.width == 128
+        assert im.height == 128
+        p = im(45, 35)
+        assert_almost_equal_objects(p, [2.670], threshold=0.01)
+
+        im = pyvips.Image.sdf(128, 128, "box", a=[10, 10], b=[50, 40])
+        assert im.bands == 1
+        assert im.format == pyvips.BandFormat.FLOAT
+        assert im.width == 128
+        assert im.height == 128
+        p = im(45, 35)
+        assert_almost_equal_objects(p, [-5.0])
+
+        im = pyvips.Image.sdf(128, 128, "rounded-box",
+                              a=[10, 10],
+                              b=[50, 40],
+                              corners=[50, 0, 0, 0])
+        assert im.bands == 1
+        assert im.format == pyvips.BandFormat.FLOAT
+        assert im.width == 128
+        assert im.height == 128
+        p = im(45, 35)
+        assert_almost_equal_objects(p, [13.640], threshold=0.01)
+
+        im = pyvips.Image.sdf(128, 128, "line", a=[10, 10], b=[50, 40])
+        assert im.bands == 1
+        assert im.format == pyvips.BandFormat.FLOAT
+        assert im.width == 128
+        assert im.height == 128
+        p = im(45, 35)
+        assert_almost_equal_objects(p, [1.0])
+
     def test_zone(self):
         im = pyvips.Image.zone(128, 128)
         assert im.width == 128
@@ -441,8 +480,7 @@ class TestCreate:
         assert im.bands == 1
         assert im.format == pyvips.BandFormat.FLOAT
 
-    @pytest.mark.skipif(pyvips.type_find("VipsOperation", "worley") == 0,
-                        reason="no worley, skipping test")
+    @skip_if_no("worley")
     def test_worley(self):
         im = pyvips.Image.worley(512, 512)
         assert im.width == 512
@@ -450,8 +488,7 @@ class TestCreate:
         assert im.bands == 1
         assert im.format == pyvips.BandFormat.FLOAT
 
-    @pytest.mark.skipif(pyvips.type_find("VipsOperation", "perlin") == 0,
-                        reason="no perlin, skipping test")
+    @skip_if_no("perlin")
     def test_perlin(self):
         im = pyvips.Image.perlin(512, 512)
         assert im.width == 512

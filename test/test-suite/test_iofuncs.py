@@ -2,41 +2,16 @@
 import pytest
 
 import pyvips
-from helpers import assert_equal_objects
+import tempfile
+from helpers import *
 
 
 class TestIofuncs:
-    # test the vips7 filename splitter ... this is very fragile and annoying
-    # code with lots of cases
+    tempdir = None
 
-    @pytest.mark.xfail(raises=AttributeError, reason="uses deprecated symbols")
-    def test_split7(self):
-        def split(path):
-            filename7 = pyvips.path_filename7(path)
-            mode7 = pyvips.path_mode7(path)
-
-            return [filename7, mode7]
-
-        cases = [
-            ["c:\\silly:dir:name\\fr:ed.tif:jpeg:95,,,,c:\\icc\\srgb.icc",
-             ["c:\\silly:dir:name\\fr:ed.tif",
-              "jpeg:95,,,,c:\\icc\\srgb.icc"]],
-            ["I180:",
-             ["I180",
-              ""]],
-            ["c:\\silly:",
-             ["c:\\silly",
-              ""]],
-            ["c:\\program files\\x:hello",
-             ["c:\\program files\\x",
-              "hello"]],
-            ["C:\\fixtures\\2569067123_aca715a2ee_o.jpg",
-             ["C:\\fixtures\\2569067123_aca715a2ee_o.jpg",
-              ""]]
-        ]
-
-        for case in cases:
-            assert_equal_objects(split(case[0]), case[1])
+    @classmethod
+    def setup_class(cls):
+        cls.tempdir = tempfile.mkdtemp()
 
     def test_new_from_image(self):
         im = pyvips.Image.mask_ideal(100, 100, 0.5,
@@ -74,8 +49,6 @@ class TestIofuncs:
 
         assert im.avg() == 10
 
-    @pytest.mark.skipif(not pyvips.at_least_libvips(8, 5),
-                        reason="requires libvips >= 8.5")
     def test_get_fields(self):
         im = pyvips.Image.black(10, 10)
         fields = im.get_fields()
@@ -89,6 +62,33 @@ class TestIofuncs:
         t = im.write_to_memory()
 
         assert s == t
+
+    @pytest.mark.skipif(pyvips.cache_get_max() == 0,
+                        reason="requires a functional operation cache")
+    def test_revalidate(self):
+        filename = temp_filename(self.tempdir, '.v')
+
+        im1 = pyvips.Image.black(10, 10)
+        im1.write_to_file(filename)
+
+        load1 = pyvips.Image.new_from_file(filename);
+        assert load1.width == im1.width
+
+        im2 = pyvips.Image.black(20, 20)
+        im2.write_to_file(filename)
+
+        # this will use the old, cached load
+        load2 = pyvips.Image.new_from_file(filename);
+        assert load2.width == im1.width
+
+        # load again with "revalidate" and we should see the new image
+        load2 = pyvips.Image.new_from_file(filename, revalidate=True);
+        assert load2.width == im2.width
+
+        # load once more without revalidate and we should see the cached
+        # new image
+        load2 = pyvips.Image.new_from_file(filename)
+        assert load2.width == im2.width
 
 
 if __name__ == '__main__':

@@ -29,7 +29,7 @@ find cplusplus/include libvips/include \
   awk -F '\0' '{print $3}' > po/POTFILES.in
 find libvips tools cplusplus \
   -path libvips/deprecated -prune -o \
-  -name dummy.c -prune -o \
+  -path libvips/foreign/libnsgif -prune -o \
   -path cplusplus/examples -prune -o \
   \( -name '*.c' -o -name '*.cpp' \) \
   -printf '%h\0%d\0%p\n' | \

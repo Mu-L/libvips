@@ -23,8 +23,10 @@ libvips_lib = library('vips',
     link_whole: libvips_components,
     dependencies: libvips_deps,
     version: library_version,
+    darwin_versions: darwin_versions,
     gnu_symbol_visibility: 'hidden',
     install: true,
+    link_args: nodelete_link_args,
 )
 
 libvips_dep = declare_dependency(
@@ -39,7 +41,7 @@ pkg.generate(
     description: 'Image processing library',
 )
 
-if get_option('introspection')
+if enable_introspection
     vips_gir = gnome.generate_gir(
         libvips_lib,
         namespace: 'Vips',
@@ -70,68 +72,56 @@ if not modules_enabled
     subdir_done()
 endif
 
-# Keep the autotools convention for shared module suffix because GModule
-# depends on it: https://gitlab.gnome.org/GNOME/glib/issues/1413
-module_suffix = []
-if ['darwin', 'ios'].contains(host_os)
-  module_suffix = 'so'
-endif
-
-if magick_dep.found() and not get_option('magick-module').disabled()
+if magick_module
     shared_module('vips-magick',
         'module/magick.c',
         magick_module_sources,
         magick_module_headers,
         name_prefix: '',
-        name_suffix: module_suffix,
         dependencies: [libvips_dep, magick_dep],
         install: true,
         install_dir: module_dir
     )
 endif
 
-if libjxl_dep.found() and not get_option('jpeg-xl-module').disabled()
+if libjxl_module
     shared_module('vips-jxl',
         'module/jxl.c',
         jpeg_xl_module_sources,
         name_prefix: '',
-        name_suffix: module_suffix,
         dependencies: [libvips_dep, libjxl_dep, libjxl_threads_dep],
         install: true,
         install_dir: module_dir
     )
 endif
 
-if libheif_dep.found() and not get_option('heif-module').disabled()
+if libheif_module
     shared_module('vips-heif',
         'module/heif.c',
         heif_module_sources,
         name_prefix: '',
-        name_suffix: module_suffix,
         dependencies: [libvips_dep, libheif_dep],
         install: true,
         install_dir: module_dir
     )
 endif
 
-if libpoppler_dep.found() and not get_option('poppler-module').disabled()
+if libpoppler_module
     shared_module('vips-poppler',
         'module/poppler.c',
         poppler_module_sources,
         name_prefix: '',
-        name_suffix: module_suffix,
         dependencies: [libvips_dep, libpoppler_dep, cairo_dep],
         install: true,
         install_dir: module_dir
     )
 endif
 
-if openslide_dep.found() and not get_option('openslide-module').disabled()
+if openslide_module
     shared_module('vips-openslide',
         'module/openslide.c',
         openslide_module_sources,
         name_prefix: '',
-        name_suffix: module_suffix,
         dependencies: [libvips_dep, openslide_dep],
         install: true,
         install_dir: module_dir

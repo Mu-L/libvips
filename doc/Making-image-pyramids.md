@@ -33,7 +33,7 @@ optional arguments:
    basename     - Base name to save to, input gchararray
    layout       - Directory layout, input VipsForeignDzLayout
 			default: dz
-			allowed: dz, zoomify, google
+			allowed: dz, zoomify, google, iiif, iiif3
    suffix       - Filename suffix for tiles, input gchararray
    overlap      - Tile overlap in pixels, input gint
 			default: 1
@@ -72,7 +72,7 @@ by using `.dz` or `.szi` as an output file suffix.
 The `--layout` option sets the basic mode of operation. With no
 `--layout`, dzsave writes DeepZoom pyramids. For example:
 
-```
+```bash
 $ vips dzsave huge.tif mydz
 ```
 
@@ -83,7 +83,7 @@ metadata. 
 You can use the `--suffix` option to control how tiles are written. For
 example:
 
-```
+```bash
 $ vips dzsave huge.tif mydz --suffix .jpg[Q=90]
 ```
 
@@ -95,7 +95,7 @@ for details.
 
 Use `--layout zoomify` to put dzsave into zoomify mode. For example:
 
-```
+```bash
 $ vips dzsave huge.tif myzoom --layout zoomify
 ```
 
@@ -111,7 +111,7 @@ Use `--layout google` to write Google maps-style pyramids. These are
 compatible with <ulink url="http://leafletjs.com">Leaflet</ulink>. For
 example:
 
-```
+```bash
 $ vips dzsave wtc.tif gmapdir --layout google
 ```
 
@@ -132,7 +132,7 @@ centred.
 
 For example:
 
-```
+```bash
 $ vips dzsave wtc.tif gmapdir --layout google --background 0 --centre
 ```
 
@@ -157,16 +157,12 @@ You can use `--container` to set the container type. Normally dzsave will
 write a tree of directories, but with `--container zip` you'll get a zip file
 instead. Use .zip as the directory suffix to turn on zip format automatically:
 
-```
+```bash
 $ vips dzsave wtc.tif mypyr.zip
 ```
 
 to write a zipfile containing the tiles. You can use `.szi` as a suffix to
-enable zip output as well. 
-
-Use `--properties` to output an XML file called `vips-properties.xml`. This
-contains a dump of all the metadata vips has about the image as a set of
-name-value pairs. It's handy with openslide image sources. 
+enable zip output as well.
 
 # Preprocessing images
 
@@ -174,7 +170,7 @@ You can use `.dz` as a filename suffix, meaning send the image to
 `vips_dzsave()`. This means you can write the output of any vips operation to a
 pyramid. For example:
 
-```
+```bash
 $ vips extract_area huge.svs mypy.dz[layout=google] 100 100 10000 10000
 ```
 
@@ -186,7 +182,7 @@ build a pyramid in Google layout using just those pixels.
 If you are working from OpenSlide images, you can use the shrink-on-load
 feature of many of those formats. For example:
 
-```
+```bash
 $ vips dzsave CMU-1.mrxs[level=1] x
 ```
 
@@ -196,7 +192,7 @@ make a pyramid from that.
 # Troubleshooting
 
 If you are building vips from source you do need to check the summary at
-the end of configure carefully. You must have the `libgsf-1-dev` package
+the end of configure carefully. You must have the `libarchive-dev` package
 for `vips_dzsave()` to work.
 
 

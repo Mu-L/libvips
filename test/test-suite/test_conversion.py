@@ -8,17 +8,12 @@ import tempfile
 import shutil
 
 import pyvips
-from helpers import IMAGES, JPEG_FILE, RGBA_FILE, unsigned_formats, \
-    signed_formats, float_formats, int_formats, \
-    noncomplex_formats, all_formats, max_value, \
-    sizeof_format, rot45_angles, rot45_angle_bonds, \
-    rot_angles, rot_angle_bonds, run_cmp, run_cmp2, \
-    assert_almost_equal_objects, temp_filename
+from helpers import *
 
 
 class TestConversion:
     tempdir = None
-    
+
     # run a function on an image,
     # 50,50 and 10,10 should have different values on the test image
     # don't loop over band elements
@@ -62,7 +57,7 @@ class TestConversion:
 
     def test_cast(self):
         # casting negative pixels to an unsigned format should clip to zero
-        for signed in signed_formats: 
+        for signed in signed_formats:
             im = (pyvips.Image.black(1, 1) - 10).cast(signed)
             for unsigned in unsigned_formats:
                 im2 = im.cast(unsigned)
@@ -126,6 +121,11 @@ class TestConversion:
         assert x[3].avg() == 1
         assert x[4].avg() == 2
 
+    def test_addalpha(self):
+        x = self.colour.addalpha()
+        assert x.bands == 4
+        assert x[3].avg() == 255  # self.colour is srgb
+
     def test_bandmean(self):
         def bandmean(x):
             if isinstance(x, pyvips.Image):
@@ -155,15 +155,6 @@ class TestConversion:
         a = self.mono.bandrank([2], index=0)
         b = (self.mono < 2).ifthenelse(self.mono, 2)
         assert (a - b).abs().min() == 0
-
-    def test_cache(self):
-        def cache(x):
-            if isinstance(x, pyvips.Image):
-                return x.cache()
-            else:
-                return x
-
-        self.run_unary(self.all_images, cache)
 
     def test_copy(self):
         x = self.colour.copy(interpretation=pyvips.Interpretation.LAB)
@@ -251,8 +242,7 @@ class TestConversion:
             pixel = [int(x) & 0xff for x in pixel]
             assert_almost_equal_objects(pixel, [255, 255, 255])
 
-    @pytest.mark.skipif(pyvips.type_find("VipsOperation", "gravity") == 0,
-                        reason="no gravity in this vips, skipping test")
+    @skip_if_no("gravity")
     def test_gravity(self):
         im = pyvips.Image.black(1, 1) + 255
 
@@ -327,12 +317,44 @@ class TestConversion:
             pixel = sub(5, 5)
             assert_almost_equal_objects(pixel, [2, 3, 4])
 
-    @pytest.mark.skipif(pyvips.type_find("VipsOperation", "smartcrop") == 0,
-                        reason="no smartcrop, skipping test")
+    @skip_if_no("smartcrop")
     def test_smartcrop(self):
         test = self.image.smartcrop(100, 100)
         assert test.width == 100
         assert test.height == 100
+
+    @skip_if_no("smartcrop")
+    def test_smartcrop_attention(self):
+        test, opts = self.image.smartcrop(
+            100, 100,
+            interesting=pyvips.enums.Interesting.ATTENTION,
+            attention_x=True, attention_y=True)
+        assert test.width == 100
+        assert test.height == 100
+
+        assert opts["attention_x"] == 199
+        assert opts["attention_y"] == 234
+
+    def test_smartcrop_rgba(self):
+        rgba = pyvips.Image.new_from_file(RGBA_FILE)
+        test, opts = rgba.smartcrop(
+            80, 60,
+            attention_x=True, attention_y=True)
+        assert test.width == 80
+        assert test.height == 60
+        assert opts["attention_x"] == 20
+        assert opts["attention_y"] == 124
+
+    def test_smartcrop_rgba_premultiplied(self):
+        rgba = pyvips.Image.new_from_file(RGBA_FILE)
+        test, opts = rgba.premultiply().smartcrop(
+            80, 60,
+            premultiplied=True,
+            attention_x=True, attention_y=True)
+        assert test.width == 80
+        assert test.height == 60
+        assert opts["attention_x"] == 20
+        assert opts["attention_y"] == 124
 
     def test_falsecolour(self):
         for fmt in all_formats:
@@ -412,8 +434,7 @@ class TestConversion:
                 # differs ... don't require huge accuracy
                 assert abs(x - y) < 2
 
-    @pytest.mark.skipif(pyvips.type_find("VipsConversion", "composite") == 0,
-                        reason="no composite support, skipping test")
+    @skip_if_no("composite")
     def test_composite(self):
         # 50% transparent image
         overlay = self.colour.bandjoin(128)
@@ -597,9 +618,9 @@ class TestConversion:
         index = pyvips.Image.switch([x < 128, x >= 128])
         assert index.avg() == 0.5
 
-        # slice into four 
+        # slice into four
         index = pyvips.Image.switch([
-            x < 64, 
+            x < 64,
             x >= 64 and x < 128,
             x >= 128 and x < 192,
             x >= 192
@@ -814,7 +835,7 @@ class TestConversion:
                 assert actual.height == meta[i]['h']
                 assert actual.get('orientation') if actual.get_typeof('orientation') else None is None
                 i = i + 1
-       
+
     def test_scaleimage(self):
         for fmt in noncomplex_formats:
             test = self.colour.cast(fmt)

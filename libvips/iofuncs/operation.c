@@ -172,7 +172,7 @@
  *
  * Flags we associate with an operation.
  *
- * @VIPS_OPERATION_SEQUENTIAL means that the operation works like
+ * [flags@Vips.OperationFlags.SEQUENTIAL] means that the operation works like
  * [method@Image.conv]: it can process images top-to-bottom with only small
  * non-local references.
  *
@@ -186,21 +186,21 @@
  * not at the top of the image. In this case, the first part of the image will
  * be read and discarded
  *
- * @VIPS_OPERATION_NOCACHE means that the operation must not be cached by
+ * [flags@Vips.OperationFlags.NOCACHE] means that the operation must not be cached by
  * vips.
  *
- * @VIPS_OPERATION_DEPRECATED means this is an old operation kept in vips for
+ * [flags@Vips.OperationFlags.DEPRECATED] means this is an old operation kept in vips for
  * compatibility only and should be hidden from users.
  *
- * @VIPS_OPERATION_UNTRUSTED means the operation depends on external libraries
+ * [flags@Vips.OperationFlags.UNTRUSTED] means the operation depends on external libraries
  * which have not been hardened against attack. It should probably not be used
  * on untrusted input. Use [func@block_untrusted_set] to block all
  * untrusted operations.
  *
- * @VIPS_OPERATION_BLOCKED means the operation is prevented from executing. Use
+ * [flags@Vips.OperationFlags.BLOCKED] means the operation is prevented from executing. Use
  * [func@Operation.block_set] to enable and disable groups of operations.
  *
- * @VIPS_OPERATION_REVALIDATE force the operation to run, updating the cache
+ * [flags@Vips.OperationFlags.REVALIDATE] force the operation to run, updating the cache
  * with the new value. This is used by eg. VipsForeignLoad to implement the
  * "revalidate" argument.
  */
@@ -935,8 +935,8 @@ vips_operation_get_valist_optional(VipsOperation *operation, va_list ap)
 /**
  * vips_call_required_optional:
  * @operation: the operation to execute
- * @required: %va_list of required arguments
- * @optional: NULL-terminated %va_list of name / value pairs
+ * @required: `va_list` of required arguments
+ * @optional: `NULL`-terminated `va_list` of name / value pairs
  *
  * This is the main entry point for the C and C++ varargs APIs. @operation
  * is executed, supplying @required and @optional arguments.
@@ -1031,7 +1031,7 @@ vips_call_by_name(const char *operation_name,
 /**
  * vips_call:
  * @operation_name: name of operation to call
- * @...: required args, then a %NULL-terminated list of argument/value pairs
+ * @...: required args, then a `NULL`-terminated list of argument/value pairs
  *
  * [func@call] calls the named operation, passing in required arguments and
  * then setting any optional ones from the remainder of the arguments as a set
@@ -1425,7 +1425,7 @@ vips_call_argv_output(VipsObject *object,
  * the GOption parser already, see above.
  *
  * We don't create the operation, so we must not unref it. The caller must
- * unref on error too. The caller must also call [method@Object.unref_outputs] on
+ * unref on error too. The caller must also call vips_object_unref_outputs() on
  * all code paths.
  */
 int

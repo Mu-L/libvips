@@ -23,7 +23,14 @@ master
 - share and reuse openslide connections
 - drop support for openslide 3.3
 - fix vips_quadratic()
+- rename `thumbnail`'s export/import profile options as input/output for
+  consistency
 - restore vips_remosaic(), it was not being linked
+- deprecate VipsSaveable, add VipsForeignSaveable
+- move vips_image_preeval(), vips_image_eval(), vips_image_posteval() into the
+  public API
+- jxlsave writes in chunks, for lower memory use on large images (but we now
+  need libjxl 0.11 at minimum)
 
 8.16.1
 

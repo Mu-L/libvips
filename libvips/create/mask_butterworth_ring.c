@@ -126,7 +126,7 @@ vips_mask_butterworth_ring_init(
  * @frequency_cutoff: frequency threshold
  * @amplitude_cutoff: amplitude threshold
  * @ringwidth: ringwidth
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Make a butterworth ring-pass or ring-reject filter, that is, one with a
  * variable,
@@ -135,14 +135,14 @@ vips_mask_butterworth_ring_init(
  * in the range 0 - 1.
  *
  * The shape of the curve is controlled by
- * @order --- higher values give a sharper transition. See Gonzalez and Wintz,
+ * @order -- higher values give a sharper transition. See Gonzalez and Wintz,
  * Digital Image Processing, 1987.
  *
  * ::: tip "Optional arguments"
- *     * @nodc: %gboolean, don't set the DC pixel
- *     * @reject: %gboolean, invert the filter sense
- *     * @optical: %gboolean, coordinates in optical space
- *     * @uchar: %gboolean, output a uchar image
+ *     * @nodc: `gboolean`, don't set the DC pixel
+ *     * @reject: `gboolean`, invert the filter sense
+ *     * @optical: `gboolean`, coordinates in optical space
+ *     * @uchar: `gboolean`, output a uchar image
  *
  * ::: seealso
  *     [ctor@Image.mask_ideal].

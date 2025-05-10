@@ -14,7 +14,7 @@
 31/8/93 JC
 	- forgot to init global max/min properly! sorry.
 21/6/95 JC
-	- still did not init max and min correctly --- now fixed for good
+	- still did not init max and min correctly -- now fixed for good
 
  * 13/1/05
  *	- use 64 bit arithmetic
@@ -454,7 +454,7 @@ vips_stats_init(VipsStats *stats)
  * vips_stats: (method)
  * @in: image to scan
  * @out: (out): image of statistics
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Find many image statistics in a single pass through the data. @out is a
  * one-band [enum@Vips.BandFormat.DOUBLE] image of at least 10 columns by n + 1

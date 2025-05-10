@@ -139,7 +139,7 @@ vips__insert_just_one(VipsRegion *out_region, VipsRegion *ir, int x, int y)
 	return 0;
 }
 
-/* Paste in parts of ir that fall within out_region --- ir is an input REGION
+/* Paste in parts of ir that fall within out_region -- ir is an input REGION
  * for an image positioned at pos within out_region.
  *
  * Also used by vips_arrayjoin.
@@ -518,11 +518,11 @@ vips_insert_init(VipsInsert *insert)
  * @out: (out): output image
  * @x: left position of @sub
  * @y: top position of @sub
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Insert @sub into @main at position @x, @y.
  *
- * Normally @out shows the whole of @main. If @expand is #TRUE then @out is
+ * Normally @out shows the whole of @main. If @expand is `TRUE` then @out is
  * made large enough to hold all of @main and @sub.
  * Any areas of @out not coming from
  * either @main or @sub are set to @background (default 0).
@@ -540,7 +540,7 @@ vips_insert_init(VipsInsert *insert)
  * [arithmetic](libvips-arithmetic.html)).
  *
  * ::: tip "Optional arguments"
- *     * @expand: %gdouble, expand output to hold whole of both images
+ *     * @expand: `gdouble`, expand output to hold whole of both images
  *     * @background: [struct@ArrayDouble], colour for new pixels
  *
  * ::: seealso

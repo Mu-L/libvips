@@ -70,8 +70,8 @@
 
 /**
  * vips_slist_equal:
- * @l1: (element-type guint8): a #GSList
- * @l2: (element-type guint8): another #GSList
+ * @l1: (element-type guint8): a [struct@GLib.SList]
+ * @l2: (element-type guint8): another [struct@GLib.SList]
  *
  * Test two lists for equality.
  *
@@ -96,15 +96,15 @@ vips_slist_equal(GSList *l1, GSList *l2)
 
 /**
  * vips_slist_map2:
- * @list: (element-type guint8): a #GSList
+ * @list: (element-type guint8): a [struct@GLib.SList]
  * @fn: (scope call): function to apply to each list element
  * @a: user data
  * @b: user data
  *
  * Map over a slist. _copy() the list in case the callback changes it.
  *
- * Returns: %NULL if @fn returns %NULL for all arguments, otherwise the first
- * non-%NULL value from @fn.
+ * Returns: `NULL` if @fn returns `NULL` for all arguments, otherwise the first
+ * non-`NULL` value from @fn.
  */
 void *
 vips_slist_map2(GSList *list, VipsSListMap2Fn fn, void *a, void *b)
@@ -124,15 +124,15 @@ vips_slist_map2(GSList *list, VipsSListMap2Fn fn, void *a, void *b)
 
 /**
  * vips_slist_map2_rev:
- * @list: (element-type guint8): a #GSList
+ * @list: (element-type guint8): a [struct@GLib.SList]
  * @fn: (scope call): function to apply to each list element
  * @a: user data
  * @b: user data
  *
  * Map backwards. We _reverse() rather than recurse and unwind to save stack.
  *
- * Returns: %NULL if @fn returns %NULL for all arguments, otherwise the first
- * non-%NULL value from @fn.
+ * Returns: `NULL` if @fn returns `NULL` for all arguments, otherwise the first
+ * non-`NULL` value from @fn.
  */
 void *
 vips_slist_map2_rev(GSList *list, VipsSListMap2Fn fn, void *a, void *b)
@@ -153,7 +153,7 @@ vips_slist_map2_rev(GSList *list, VipsSListMap2Fn fn, void *a, void *b)
 
 /**
  * vips_slist_map4:
- * @list: (element-type guint8): a #GSList
+ * @list: (element-type guint8): a [struct@GLib.SList]
  * @fn: (scope call): function to apply to each list element
  * @a: user data
  * @b: user data
@@ -162,8 +162,8 @@ vips_slist_map2_rev(GSList *list, VipsSListMap2Fn fn, void *a, void *b)
  *
  * Map over a slist. _copy() the list in case the callback changes it.
  *
- * Returns: %NULL if @fn returns %NULL for all arguments, otherwise the first
- * non-%NULL value from @fn.
+ * Returns: `NULL` if @fn returns `NULL` for all arguments, otherwise the first
+ * non-`NULL` value from @fn.
  */
 void *
 vips_slist_map4(GSList *list,
@@ -185,7 +185,7 @@ vips_slist_map4(GSList *list,
 
 /**
  * vips_slist_fold2:
- * @list: (element-type guint8): a #GSList
+ * @list: (element-type guint8): a [struct@GLib.SList]
  * @start: initial value for the accumulator
  * @fn: (scope call): function to apply to each list element
  * @a: user data
@@ -193,8 +193,8 @@ vips_slist_map4(GSList *list,
  *
  * Fold over a slist, applying @fn to each element.
  *
- * Returns: %NULL if @fn returns %NULL for all arguments, otherwise the first
- * non-%NULL value from @fn.
+ * Returns: `NULL` if @fn returns `NULL` for all arguments, otherwise the first
+ * non-`NULL` value from @fn.
  */
 void *
 vips_slist_fold2(GSList *list, void *start,
@@ -215,7 +215,7 @@ vips_slist_fold2(GSList *list, void *start,
 
 /**
  * vips_slist_filter:
- * @list: (element-type guint8): a #GSList
+ * @list: (element-type guint8): a [struct@GLib.SList]
  * @fn: (scope call): function to call for each element.
  * @a: user data
  * @b: user data
@@ -264,7 +264,7 @@ vips_slist_free_all_cb(void *thing, void *dummy)
 
 /**
  * vips_slist_free_all:
- * @list: (element-type guint8): a #GSList
+ * @list: (element-type guint8): a [struct@GLib.SList]
  *
  * Free a [struct@GLib.SList] of things which need [func@GLib.free]ing.
  */
@@ -306,8 +306,8 @@ vips_hash_table_predicate(const char *key, void *value, Pair *pair)
  *
  * Like slist map, but for a hash table.
  *
- * Returns: %NULL if @fn returns %NULL for all arguments, otherwise the first
- * non-%NULL value from @fn.
+ * Returns: `NULL` if @fn returns `NULL` for all arguments, otherwise the first
+ * non-`NULL` value from @fn.
  */
 void *
 vips_hash_table_map(GHashTable *hash, VipsSListMap2Fn fn, void *a, void *b)
@@ -339,7 +339,7 @@ vips_iscasepostfix(const char *a, const char *b)
 }
 
 /* Test for string a starts string b. a is a known-good string, b may be
- * random data. Use [func@GLib.str_has_prefix] when both strings are non-NULL and
+ * random data. Use g_str_has_prefix() when both strings are non-NULL and
  * NULL-terminated.
  */
 gboolean
@@ -930,7 +930,7 @@ vips__gvalue_ref_string_new(const char *text)
 
 /**
  * vips__gslist_gvalue_free:
- * @list: (element-type GValue): a #GSList of GValue
+ * @list: (element-type GValue): a [struct@GLib.SList] of GValue
  *
  * Free a GSList of GValue.
  */
@@ -943,7 +943,7 @@ vips__gslist_gvalue_free(GSList *list)
 
 /**
  * vips__gslist_gvalue_copy:
- * @list: (element-type GValue): a #GSList of GValue
+ * @list: (element-type GValue): a [struct@GLib.SList] of GValue
  *
  * Copy a GSList of GValue.
  *
@@ -968,8 +968,8 @@ vips__gslist_gvalue_copy(const GSList *list)
 
 /**
  * vips__gslist_gvalue_merge:
- * @a: (element-type GValue): a #GSList of GValue
- * @b: (element-type GValue): a #GSList of GValue
+ * @a: (element-type GValue): a [struct@GLib.SList] of GValue
+ * @b: (element-type GValue): a [struct@GLib.SList] of GValue
  *
  * Merge two GSList of GValue ... append to a all elements in b which are not
  * in a. Works for any vips refcounted type (string, blob, etc.).
@@ -1015,7 +1015,7 @@ vips__gslist_gvalue_merge(GSList *a, const GSList *b)
 
 /**
  * vips__gslist_gvalue_get:
- * @list: (element-type GValue): a #GSList of GValue
+ * @list: (element-type GValue): a [struct@GLib.SList] of GValue
  *
  * Make a char * from GSList of GValue. Each GValue should be a ref_string.
  *

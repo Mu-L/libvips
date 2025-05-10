@@ -983,7 +983,7 @@ vips_conva_horizontal(VipsConva *conva, VipsImage *in, VipsImage **out)
 {
 	VipsObjectClass *class = VIPS_OBJECT_GET_CLASS(conva);
 
-	/* Prepare output. Consider a 7x7 mask and a 7x7 image --- the output
+	/* Prepare output. Consider a 7x7 mask and a 7x7 image -- the output
 	 * would be 1x1.
 	 */
 	*out = vips_image_new();
@@ -1233,7 +1233,7 @@ vips_conva_vertical(VipsConva *conva, VipsImage *in, VipsImage **out)
 	VipsObjectClass *class = VIPS_OBJECT_GET_CLASS(conva);
 	VipsConvolution *convolution = (VipsConvolution *) conva;
 
-	/* Prepare output. Consider a 7x7 mask and a 7x7 image --- the output
+	/* Prepare output. Consider a 7x7 mask and a 7x7 image -- the output
 	 * would be 1x1.
 	 */
 	*out = vips_image_new();
@@ -1346,7 +1346,7 @@ vips_conva_init(VipsConva *conva)
  * @in: input image
  * @out: (out): output image
  * @mask: convolution mask
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Perform an approximate integer convolution of @in with @mask.
  * This is a low-level operation, see [method@Image.conv] for something more
@@ -1367,8 +1367,8 @@ vips_conva_init(VipsConva *conva)
  * and use more memory. 10% of the mask radius is a good rule of thumb.
  *
  * ::: tip "Optional arguments"
- *     * @layers: %gint, number of layers for approximation
- *     * @cluster: %gint, cluster lines closer than this distance
+ *     * @layers: `gint`, number of layers for approximation
+ *     * @cluster: `gint`, cluster lines closer than this distance
  *
  * ::: seealso
  *     [method@Image.conv].

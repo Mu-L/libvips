@@ -169,7 +169,7 @@ vips_hough_line_init(VipsHoughLine *hough_line)
  * vips_hough_line: (method)
  * @in: input image
  * @out: (out): output image
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Find the line Hough transform for @in. @in must have one band. @out has one
  * band, with pixels being the number of votes for that line. The X dimension
@@ -180,8 +180,8 @@ vips_hough_line_init(VipsHoughLine *hough_line)
  * that is, how accurate the line determination should be.
  *
  * ::: tip "Optional arguments"
- *     * @width: horizontal size of parameter space
- *     * @height: vertical size of parameter space
+ *     * @width: `gint`, horizontal size of parameter space
+ *     * @height: `gint`, vertical size of parameter space
  *
  * ::: seealso
  *     [method@Image.hough_circle].

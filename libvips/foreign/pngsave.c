@@ -102,6 +102,7 @@ vips_foreign_save_png_build(VipsObject *object)
 	VipsForeignSavePng *png = (VipsForeignSavePng *) object;
 
 	VipsImage *in;
+	VipsImage *x;
 
 	if (VIPS_OBJECT_CLASS(vips_foreign_save_png_parent_class)->build(object))
 		return -1;
@@ -124,18 +125,27 @@ vips_foreign_save_png_build(VipsObject *object)
 	if (vips_object_argument_isset(object, "colours"))
 		png->bitdepth = ceil(log2(png->colours));
 
-	/* Cast in down to 8 bit if we can.
+	/* The bitdepth param can change the interpretation.
 	 */
-	if (png->bitdepth <= 8) {
-		VipsImage *x;
-
-		if (vips_cast(in, &x, VIPS_FORMAT_UCHAR, NULL)) {
-			g_object_unref(in);
-			return -1;
-		}
-		g_object_unref(in);
-		in = x;
+	VipsInterpretation interpretation;
+	if (in->Bands > 2) {
+	   if (png->bitdepth > 8)
+		   interpretation = VIPS_INTERPRETATION_RGB16;
+	   else
+		   interpretation = VIPS_INTERPRETATION_sRGB;
 	}
+	else {
+	   if (png->bitdepth > 8)
+		   interpretation = VIPS_INTERPRETATION_GREY16;
+	   else
+		   interpretation = VIPS_INTERPRETATION_B_W;
+	}
+	if (vips_colourspace(in, &x, interpretation, NULL)) {
+		g_object_unref(in);
+		return -1;
+	}
+	g_object_unref(in);
+	in = x;
 
 	/* If this is a RGB or RGBA image and a low bit depth has been
 	 * requested, enable palettization.
@@ -204,7 +214,10 @@ vips_foreign_save_png_class_init(VipsForeignSavePngClass *class)
 
 	foreign_class->suffs = vips__png_suffs;
 
-	save_class->saveable = VIPS_SAVEABLE_RGBA;
+	save_class->saveable =
+		VIPS_FOREIGN_SAVEABLE_MONO |
+		VIPS_FOREIGN_SAVEABLE_RGB |
+		VIPS_FOREIGN_SAVEABLE_ALPHA;
 	save_class->format_table = bandfmt_png;
 
 	VIPS_ARG_INT(class, "compression", 6,
@@ -355,10 +368,8 @@ vips_foreign_save_png_file_build(VipsObject *object)
 	if (!(png->target = vips_target_new_to_file(file->filename)))
 		return -1;
 
-	if (VIPS_OBJECT_CLASS(vips_foreign_save_png_file_parent_class)->build(object))
-		return -1;
-
-	return 0;
+	return VIPS_OBJECT_CLASS(vips_foreign_save_png_file_parent_class)->
+		build(object);
 }
 
 static void
@@ -452,13 +463,13 @@ vips_foreign_save_png_buffer_init(VipsForeignSavePngBuffer *buffer)
  * vips_pngsave: (method)
  * @in: image to save
  * @filename: file to write to
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Write a VIPS image to a file as PNG.
  *
  * @compression means compress with this much effort (0 - 9). Default 6.
  *
- * Set @interlace to %TRUE to interlace the image with ADAM7
+ * Set @interlace to `TRUE` to interlace the image with ADAM7
  * interlacing. Beware
  * than an interlaced PNG can be up to 7 times slower to write than a
  * non-interlaced image.
@@ -470,7 +481,7 @@ vips_foreign_save_png_buffer_init(VipsForeignSavePngBuffer *buffer)
  * alpha before saving. Images with more than one byte per band element are
  * saved as 16-bit PNG, others are saved as 8-bit PNG.
  *
- * Set @palette to %TRUE to enable palette mode for RGB or RGBA images. A
+ * Set @palette to `TRUE` to enable palette mode for RGB or RGBA images. A
  * palette will be computed with enough space for @bitdepth (1, 2, 4 or 8)
  * bits. Use @Q to set the optimisation effort, @dither to set the degree of
  * Floyd-Steinberg dithering and @effort to control the CPU effort
@@ -485,17 +496,17 @@ vips_foreign_save_png_buffer_init(VipsForeignSavePngBuffer *buffer)
  * separate text chunks.
  *
  * ::: tip "Optional arguments"
- *     * @compression: %gint, compression level
- *     * @interlace: %gboolean, interlace image
+ *     * @compression: `gint`, compression level
+ *     * @interlace: `gboolean`, interlace image
  *     * @filter: [flags@ForeignPngFilter], row filter flag(s)
- *     * @palette: %gboolean, enable quantisation to 8bpp palette
- *     * @Q: %gint, quality for 8bpp quantisation
- *     * @dither: %gdouble, amount of dithering for 8bpp quantization
- *     * @bitdepth: %gint, set write bit depth to 1, 2, 4, 8 or 16
- *     * @effort: %gint, quantisation CPU effort
+ *     * @palette: `gboolean`, enable quantisation to 8bpp palette
+ *     * @Q: `gint`, quality for 8bpp quantisation
+ *     * @dither: `gdouble`, amount of dithering for 8bpp quantization
+ *     * @bitdepth: `gint`, set write bit depth to 1, 2, 4, 8 or 16
+ *     * @effort: `gint`, quantisation CPU effort
  *
  * ::: seealso
- *     vips_image_new_from_file().
+ *     [ctor@Image.new_from_file].
  *
  * Returns: 0 on success, -1 on error.
  */
@@ -517,7 +528,7 @@ vips_pngsave(VipsImage *in, const char *filename, ...)
  * @in: image to save
  * @buf: (array length=len) (element-type guint8): return output buffer here
  * @len: (type gsize): return output length here
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * As [method@Image.pngsave], but save to a memory buffer.
  *
@@ -526,14 +537,14 @@ vips_pngsave(VipsImage *in, const char *filename, ...)
  * are done with it.
  *
  * ::: tip "Optional arguments"
- *     * @compression: %gint, compression level
- *     * @interlace: %gboolean, interlace image
+ *     * @compression: `gint`, compression level
+ *     * @interlace: `gboolean`, interlace image
  *     * @filter: [flags@ForeignPngFilter], row filter flag(s)
- *     * @palette: %gboolean, enable quantisation to 8bpp palette
- *     * @Q: %gint, quality for 8bpp quantisation
- *     * @dither: %gdouble, amount of dithering for 8bpp quantization
- *     * @bitdepth: %gint, set write bit depth to 1, 2, 4, 8 or 16
- *     * @effort: %gint, quantisation CPU effort
+ *     * @palette: `gboolean`, enable quantisation to 8bpp palette
+ *     * @Q: `gint`, quality for 8bpp quantisation
+ *     * @dither: `gdouble`, amount of dithering for 8bpp quantization
+ *     * @bitdepth: `gint`, set write bit depth to 1, 2, 4, 8 or 16
+ *     * @effort: `gint`, quantisation CPU effort
  *
  * ::: seealso
  *     [method@Image.pngsave], [method@Image.write_to_file].
@@ -572,19 +583,19 @@ vips_pngsave_buffer(VipsImage *in, void **buf, size_t *len, ...)
  * vips_pngsave_target: (method)
  * @in: image to save
  * @target: save image to this target
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * As [method@Image.pngsave], but save to a target.
  *
  * ::: tip "Optional arguments"
- *     * @compression: %gint, compression level
- *     * @interlace: %gboolean, interlace image
+ *     * @compression: `gint`, compression level
+ *     * @interlace: `gboolean`, interlace image
  *     * @filter: [flags@ForeignPngFilter], row filter flag(s)
- *     * @palette: %gboolean, enable quantisation to 8bpp palette
- *     * @Q: %gint, quality for 8bpp quantisation
- *     * @dither: %gdouble, amount of dithering for 8bpp quantization
- *     * @bitdepth: %gint, set write bit depth to 1, 2, 4, 8 or 16
- *     * @effort: %gint, quantisation CPU effort
+ *     * @palette: `gboolean`, enable quantisation to 8bpp palette
+ *     * @Q: `gint`, quality for 8bpp quantisation
+ *     * @dither: `gdouble`, amount of dithering for 8bpp quantization
+ *     * @bitdepth: `gint`, set write bit depth to 1, 2, 4, 8 or 16
+ *     * @effort: `gint`, quantisation CPU effort
  *
  * ::: seealso
  *     [method@Image.pngsave], [method@Image.write_to_target].

@@ -639,23 +639,23 @@ vips_mosaic1_init(VipsMosaic1 *mosaic1)
  * @yr2: second reference tie-point
  * @xs2: second secondary tie-point
  * @ys2: second secondary tie-point
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * This operation joins two images top-bottom (with @sec on the right)
  * or left-right (with @sec at the bottom)
  * given an approximate pair of tie-points. @sec is scaled and rotated as
  * necessary before the join.
  *
- * If @search is %TRUE, before performing the transformation, the tie-points
+ * If @search is `TRUE`, before performing the transformation, the tie-points
  * are improved by searching an area of @sec of size @harea for a
  * object of size @hwindow in @ref.
  *
- * @mblend limits  the  maximum size of the
- * blend area.  A value of "-1" means "unlimited". The two images are blended
+ * @mblend limits the maximum size of the
+ * blend area. A value of "-1" means "unlimited". The two images are blended
  * with a raised cosine.
  *
  * Pixels with all bands equal to zero are "transparent", that
- * is, zero pixels in the overlap area do not  contribute  to  the  merge.
+ * is, zero pixels in the overlap area do not contribute to the merge.
  * This makes it possible to join non-rectangular images.
  *
  * If the number of bands differs, one of the images
@@ -668,11 +668,11 @@ vips_mosaic1_init(VipsMosaic1 *mosaic1)
  * [arithmetic](libvips-arithmetic.html)).
  *
  * ::: tip "Optional arguments"
- *     * @search: %gboolean, search to improve tie-points
- *     * @hwindow: %gint, half window size
- *     * @harea: %gint, half search size
+ *     * @search: `gboolean`, search to improve tie-points
+ *     * @hwindow: `gint`, half window size
+ *     * @harea: `gint`, half search size
  *     * @interpolate: [class@Interpolate], interpolate pixels with this
- *     * @mblend: %gint, maximum blend size
+ *     * @mblend: `gint`, maximum blend size
  *
  * ::: seealso
  *     [method@Image.merge], [method@Image.insert], [method@Image.globalbalance].

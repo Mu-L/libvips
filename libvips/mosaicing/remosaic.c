@@ -198,14 +198,14 @@ vips_remosaic_init(VipsRemosaic *remosaic)
  * @out: (out): output image
  * @old_str: gamma of source images
  * @new_str: gamma of source images
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * [method@Image.remosaic] works rather as [method@Image.globalbalance]. It
  * takes apart the mosaiced image @in and rebuilds it, substituting images.
  *
  * Unlike [method@Image.globalbalance], images are substituted based on their
- * filenames.  The  rightmost  occurrence  of the string @old_str is swapped
- * for @new_str, that file is opened, and that image substituted  for
+ * filenames. The rightmost occurrence of the string @old_str is swapped
+ * for @new_str, that file is opened, and that image substituted for
  * the old image.
  *
  * It's convenient for multispectral images. You can mosaic one band, then

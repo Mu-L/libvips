@@ -1,4 +1,4 @@
-/* ifthenelse.c --- use a condition image to join two images together
+/* ifthenelse.c -- use a condition image to join two images together
  *
  * Modified:
  * 9/2/95 JC
@@ -562,7 +562,7 @@ vips_ifthenelse_init(VipsIfthenelse *ifthenelse)
  * @in1: then [class@Image]
  * @in2: else [class@Image]
  * @out: (out): output [class@Image]
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * This operation scans the condition image @cond
  * and uses it to select pixels from either the then image @in1 or the else
@@ -578,15 +578,15 @@ vips_ifthenelse_init(VipsIfthenelse *ifthenelse)
  * If the images differ in size, the smaller images are enlarged to match the
  * largest by adding zero pixels along the bottom and right.
  *
- * If @blend is %TRUE, then values in @out are smoothly blended between @in1
+ * If @blend is `TRUE`, then values in @out are smoothly blended between @in1
  * and @in2 using the formula:
  *
  * ```
- *     out = (cond / 255) * in1 + (1 - cond / 255) * in2
+ * out = (cond / 255) * in1 + (1 - cond / 255) * in2
  * ```
  *
  * ::: tip "Optional arguments"
- *     * @blend: %gboolean, blend smoothly between @in1 and @in2
+ *     * @blend: `gboolean`, blend smoothly between @in1 and @in2
  *
  * ::: seealso
  *     [method@Image.equal].

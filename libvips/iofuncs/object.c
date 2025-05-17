@@ -179,20 +179,20 @@
  * Input gobjects are automatically reffed, output gobjects automatically ref
  * us. We also automatically watch for "destroy" and unlink.
  *
- * @VIPS_ARGUMENT_SET_ALWAYS is handy for arguments which are set from C. For
- * example, VipsImage::width is a property that gives access to the Xsize
- * member of struct _VipsImage. We default its 'assigned' to TRUE
+ * [flags@Vips.ArgumentFlags.SET_ALWAYS] is handy for arguments which are set from C. For
+ * example, [property@Image:width] is a property that gives access to the Xsize
+ * member of struct _VipsImage. We default its 'assigned' to `TRUE`
  * since the field is always set directly by C.
  *
- * @VIPS_ARGUMENT_DEPRECATED arguments are not shown in help text, are not
+ * [flags@Vips.ArgumentFlags.DEPRECATED] arguments are not shown in help text, are not
  * looked for if required, are not checked for "have-been-set". You can
  * deprecate a required argument, but you must obviously add a new required
  * argument if you do.
  *
- * Input args with @VIPS_ARGUMENT_MODIFY will be modified by the operation.
+ * Input args with [flags@Vips.ArgumentFlags.MODIFY] will be modified by the operation.
  * This is used for things like the in-place drawing operations.
  *
- * @VIPS_ARGUMENT_NON_HASHABLE stops the argument being used in hash and
+ * [flags@Vips.ArgumentFlags.NON_HASHABLE] stops the argument being used in hash and
  * equality tests. It's useful for arguments like `revalidate` which
  * control the behaviour of the operator cache.
  */
@@ -582,11 +582,11 @@ vips_argument_table_destroy(VipsArgumentTable *table)
  * @a: client data
  * @b: client data
  *
- * Loop over the vips_arguments to an object. Stop when @fn returns non-%NULL
+ * Loop over the [struct@Argument] of an object. Stop when @fn returns non-`NULL`
  * and return that value.
  *
- * Returns: %NULL if @fn returns %NULL for all arguments, otherwise the first
- * non-%NULL value from @fn.
+ * Returns: `NULL` if @fn returns `NULL` for all arguments, otherwise the first
+ * non-`NULL` value from @fn.
  */
 void *
 vips_argument_map(VipsObject *object,
@@ -802,7 +802,7 @@ vips_object_get_argument(VipsObject *object, const char *name,
  *
  * Convenience: has an argument been assigned. Useful for bindings.
  *
- * Returns: %TRUE if the argument has been assigned.
+ * Returns: `TRUE` if the argument has been assigned.
  */
 gboolean
 vips_object_argument_isset(VipsObject *object, const char *name)
@@ -933,7 +933,7 @@ vips_object_dispose_argument(VipsObject *object, GParamSpec *pspec,
 
 /* Free all args on this object which may be holding resources.
  *
- * Note that this is not the same as [method@Object.unref_outputs]. That
+ * Note that this is not the same as vips_object_unref_outputs(). That
  * looks for output objects which may have been created during _build() which
  * hold refs to this object and unrefs them.
  *
@@ -2301,11 +2301,11 @@ vips_object_find_args(VipsObject *object,
 /**
  * vips_object_get_args: (skip)
  * @object: object whose args should be retrieved
- * @names: (transfer none) (array length=n_args) (allow-none): output array of %GParamSpec names
+ * @names: (transfer none) (array length=n_args) (allow-none): output array of [class@GObject.ParamSpec] names
  * @flags: (transfer none) (array length=n_args) (allow-none): output array of [flags@ArgumentFlags]
  * @n_args: (allow-none): length of output arrays
  *
- * Get all %GParamSpec names and [flags@ArgumentFlags] for an object.
+ * Get all [class@GObject.ParamSpec] names and [flags@ArgumentFlags] for an object.
  *
  * This is handy for language bindings. From C, it's usually more convenient to
  * use [func@Argument.map].
@@ -2379,7 +2379,7 @@ vips_object_new(GType type, VipsObjectSetArguments set, void *a, void *b)
 /**
  * vips_object_set_valist:
  * @object: object to set arguments on
- * @ap: %NULL-terminated list of argument/value pairs
+ * @ap: `NULL`-terminated list of argument/value pairs
  *
  * See [method@Object.set].
  *
@@ -2418,7 +2418,7 @@ vips_object_set_valist(VipsObject *object, va_list ap)
 /**
  * vips_object_set:
  * @object: object to set arguments on
- * @...: %NULL-terminated list of argument/value pairs
+ * @...: `NULL`-terminated list of argument/value pairs
  *
  * Set a list of vips object arguments. For example:
  *
@@ -2722,10 +2722,10 @@ vips_object_map_sub(VipsObject *key, VipsObject *value,
  * @b: client data
  *
  * Call a function for all alive objects.
- * Stop when @fn returns non-%NULL and return that value.
+ * Stop when @fn returns non-`NULL` and return that value.
  *
- * Returns: %NULL if @fn returns %NULL for all arguments, otherwise the first
- * non-%NULL value from @fn.
+ * Returns: `NULL` if @fn returns `NULL` for all arguments, otherwise the first
+ * non-`NULL` value from @fn.
  */
 void *
 vips_object_map(VipsSListMap2Fn fn, void *a, void *b)
@@ -2757,11 +2757,11 @@ vips_object_map(VipsSListMap2Fn fn, void *a, void *b)
  * @a: client data
  * @b: client data
  *
- * Map over a type's children. Stop when @fn returns non-%NULL
+ * Map over a type's children. Stop when @fn returns non-`NULL`
  * and return that value.
  *
- * Returns: %NULL if @fn returns %NULL for all arguments, otherwise the first
- * non-%NULL value from @fn.
+ * Returns: `NULL` if @fn returns `NULL` for all arguments, otherwise the first
+ * non-`NULL` value from @fn.
  */
 void *
 vips_type_map(GType base, VipsTypeMap2Fn fn, void *a, void *b)
@@ -2787,10 +2787,10 @@ vips_type_map(GType base, VipsTypeMap2Fn fn, void *a, void *b)
  * @a: client data
  *
  * Map over a type's children, direct and indirect. Stop when @fn returns
- * non-%NULL and return that value.
+ * non-`NULL` and return that value.
  *
- * Returns: %NULL if @fn returns %NULL for all arguments, otherwise the first
- * non-%NULL value from @fn.
+ * Returns: `NULL` if @fn returns `NULL` for all arguments, otherwise the first
+ * non-`NULL` value from @fn.
  */
 void *
 vips_type_map_all(GType base, VipsTypeMapFn fn, void *a)
@@ -2812,10 +2812,10 @@ vips_type_map_all(GType base, VipsTypeMapFn fn, void *a)
  *
  * Loop over all the subclasses of @type. Non-abstract classes only.
  * Stop when @fn returns
- * non-%NULL and return that value.
+ * non-`NULL` and return that value.
  *
- * Returns: %NULL if @fn returns %NULL for all arguments, otherwise the first
- * non-%NULL value from @fn.
+ * Returns: `NULL` if @fn returns `NULL` for all arguments, otherwise the first
+ * non-`NULL` value from @fn.
  */
 void *
 vips_class_map_all(GType type, VipsClassMapFn fn, void *a)
@@ -2954,16 +2954,16 @@ vips_class_build_hash_cb(void *dummy)
  * @basename: name of base class
  * @nickname: search for a class with this nickname
  *
- * Search below @basename, return the %GType of the class whose name or
- * @nickname matches, or 0 for not found.
- * If @basename is NULL, the whole of [class@Object] is searched.
+ * Search below @basename, return the [alias@GObject.Type] of the class
+ * whose name or @nickname matches, or 0 for not found.
+ * If @basename is `NULL`, the whole of [class@Object] is searched.
  *
  * This function uses a cache, so it should be quick.
  *
  * ::: seealso
  *     [func@class_find]
  *
- * Returns: the %GType of the class, or 0 if the class is not found.
+ * Returns: the [alias@GObject.Type] of the class, or 0 if the class is not found.
  */
 GType
 vips_type_find(const char *basename, const char *nickname)
@@ -3004,9 +3004,9 @@ vips_type_find(const char *basename, const char *nickname)
 
 /**
  * vips_nickname_find:
- * @type: #GType to search for
+ * @type: [alias@GObject.Type] to search for
  *
- * Return the VIPS nickname for a %GType. Handy for language bindings.
+ * Return the VIPS nickname for a [alias@GObject.Type]. Handy for language bindings.
  *
  * Returns: (transfer none): the class nickname.
  */
@@ -3055,11 +3055,11 @@ vips_object_local_array_cb(VipsObject *parent, VipsObjectLocal *local)
  * @parent: objects unref when this object unrefs
  * @n: array size
  *
- * Make an array of NULL VipsObject pointers. When @parent closes, every
- * non-NULL pointer in the array will be unreffed and the array will be
+ * Make an array of `NULL` [class@Object] pointers. When @parent closes, every
+ * non-`NULL` pointer in the array will be unreffed and the array will be
  * freed. Handy for creating a set of temporary images for a function.
  *
- * The array is NULL-terminated, ie. contains an extra NULL element at the
+ * The array is `NULL`-terminated, ie. contains an extra `NULL` element at the
  * end.
  *
  * Example:
@@ -3072,10 +3072,10 @@ vips_object_local_array_cb(VipsObject *parent, VipsObjectLocal *local)
  *     vips_invert(t[0], &t[1], NULL) ||
  *     vips_add(t[1], t[0], &t[2], NULL) ||
  *     vips_costra(t[2], out, NULL))
- *   return -1;
+ *     return -1;
  * ```
  *
- * Returns: an array of NULL pointers of length @n
+ * Returns: an array of `NULL` pointers of length @n
  */
 VipsObject **
 vips_object_local_array(VipsObject *parent, int n)
@@ -3242,7 +3242,7 @@ vips_object_unref_outputs(VipsObject *object)
  *
  * Fetch the object description. Useful for language bindings.
  *
- * @object.description is only available after _build(), which can be too
+ * [property@Object:description] is only available after `_build()`, which can be too
  * late. This function fetches from the instance, if possible, but falls back
  * to the class description if we are too early.
  *

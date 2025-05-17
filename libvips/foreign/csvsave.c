@@ -217,7 +217,7 @@ vips_foreign_save_csv_class_init(VipsForeignSaveCsvClass *class)
 
 	foreign_class->suffs = vips_foreign_save_csv_suffs;
 
-	save_class->saveable = VIPS_SAVEABLE_MONO;
+	save_class->saveable = VIPS_FOREIGN_SAVEABLE_MONO;
 
 	VIPS_ARG_STRING(class, "separator", 13,
 		_("Separator"),
@@ -338,7 +338,7 @@ vips_foreign_save_csv_target_init(VipsForeignSaveCsvTarget *target)
  * vips_csvsave: (method)
  * @in: image to save
  * @filename: file to write to
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Writes the pixels in @in to the @filename as CSV (comma-separated values).
  *
@@ -351,7 +351,7 @@ vips_foreign_save_csv_target_init(VipsForeignSaveCsvTarget *target)
  * The default is "\\t" (tab).
  *
  * ::: tip "Optional arguments"
- *     * @separator: separator string
+ *     * @separator: `gchararray`, separator string
  *
  * ::: seealso
  *     [method@Image.write_to_file].
@@ -375,12 +375,12 @@ vips_csvsave(VipsImage *in, const char *filename, ...)
  * vips_csvsave_target: (method)
  * @in: image to save
  * @target: save image to this target
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * As [method@Image.csvsave], but save to a target.
  *
  * ::: tip "Optional arguments"
- *     * @separator: separator string
+ *     * @separator: `gchararray`, separator string
  *
  * ::: seealso
  *     [method@Image.csvsave].

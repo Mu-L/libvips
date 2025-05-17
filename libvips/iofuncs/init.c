@@ -234,20 +234,20 @@ vips_get_prgname(void)
  *
  * [func@INIT] does approximately the following:
  *
- * + checks that the libvips your program is expecting is
+ * - checks that the libvips your program is expecting is
  *   binary-compatible with the vips library you're running against
  *
- * + sets a minimum stack size, see above
+ * - sets a minimum stack size, see above
  *
- * + initialises any libraries that VIPS is using, including GObject
+ * - initialises any libraries that VIPS is using, including GObject
  *   and the threading system, if necessary
  *
- * + guesses where the VIPS data files are and sets up
- *   internationalisation --- see [func@guess_prefix]
+ * - guesses where the VIPS data files are and sets up
+ *   internationalisation -- see [func@guess_prefix]
  *
- * + creates the main vips types, including [class@Image] and friends
+ * - creates the main vips types, including [class@Image] and friends
  *
- * + loads any plugins from $libdir/vips-x.y/, where x and y are the
+ * - loads any plugins from $libdir/vips-x.y/, where x and y are the
  *   major and minor version numbers for this VIPS.
  *
  * Example:
@@ -644,7 +644,7 @@ vips_init(const char *argv0)
 
 	/* If VIPS_WARNING is defined, suppress all warning messages from vips.
 	 *
-	 * Libraries should not call [func@GLib.log_set_handler], it is
+	 * Libraries should not call g_log_set_handler(), it is
 	 * supposed to be for the application layer, but this can be awkward to
 	 * set up if you are using libvips from something like Ruby. Allow this
 	 * env var hack as a workaround.
@@ -675,7 +675,7 @@ void
 vips_check_init(void)
 {
 	/* Pass in a nonsense name for argv0 ... this init path is only here
-	 * for old programs which are missing an [func@init] call. We need
+	 * for old programs which are missing an vips_init() call. We need
 	 * i18n set up before we can translate.
 	 */
 	if (vips_init("vips"))

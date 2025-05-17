@@ -281,16 +281,16 @@ vips_premultiply_init(VipsPremultiply *premultiply)
  * vips_premultiply: (method)
  * @in: input image
  * @out: (out): output image
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Premultiplies any alpha channel.
  *
  * The final band is taken to be the alpha and the bands are transformed as:
  *
  * ```
- *   alpha = clip(0, in[in.bands - 1], max_alpha)
- *   norm = alpha / max_alpha
- *   out = [in[0] * norm, ..., in[in.bands - 1] * norm, alpha]
+ * alpha = clip(0, in[in.bands - 1], max_alpha)
+ * norm = alpha / max_alpha
+ * out = [in[0] * norm, ..., in[in.bands - 1] * norm, alpha]
  * ```
  *
  * So for an N-band image, the first N - 1 bands are multiplied by the clipped
@@ -309,7 +309,7 @@ vips_premultiply_init(VipsPremultiply *premultiply)
  * Non-complex images only.
  *
  * ::: tip "Optional arguments"
- *     * @max_alpha: %gdouble, maximum value for alpha
+ *     * @max_alpha: `gdouble`, maximum value for alpha
  *
  * ::: seealso
  *     [method@Image.unpremultiply], [method@Image.flatten].

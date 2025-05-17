@@ -69,7 +69,7 @@
  * @VIPS_KERNEL_MKS2013: Convolve with Magic Kernel Sharp 2013.
  * @VIPS_KERNEL_MKS2021: Convolve with Magic Kernel Sharp 2021.
  *
- * The resampling kernels vips supports. See vips_reduce(), for example.
+ * The resampling kernels vips supports. See [method@Image.reduce], for example.
  */
 
 
@@ -204,7 +204,7 @@ vips_reduce_init(VipsReduce *reduce)
  * @out: (out): output image
  * @hshrink: horizontal shrink
  * @vshrink: vertical shrink
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Reduce @in by a pair of factors with a pair of 1D kernels.
  *
@@ -222,8 +222,9 @@ vips_reduce_init(VipsReduce *reduce)
  * be updated by the application.
  *
  * ::: tip "Optional arguments"
- *     * @kernel: [enum@Kernel], kernel to interpolate with (default: lanczos3)
- *     * @gap: reducing gap to use (default: 0.0)
+ *     * @kernel: [enum@Kernel], kernel to interpolate with
+ *       (default: [enum@Vips.Kernel.LANCZOS3])
+ *     * @gap: `gdouble`, reducing gap to use (default: 0.0)
  *
  * ::: seealso
  *     [method@Image.shrink], [method@Image.resize], [method@Image.affine].

@@ -7,7 +7,7 @@
  * 10/3/03 JC
  *	- out can be NULL
  * 23/12/04
- *	- use [func@GLib.mkstemp]
+ *	- use g_mkstemp()
  * 8/9/09
  * 	- add .v suffix (thanks Roland)
  * 	- use vipsbuf
@@ -323,14 +323,7 @@ vips_system_init(VipsSystem *system)
 /**
  * vips_system:
  * @cmd_format: command to run
- * @...: %NULL-terminated list of optional named arguments
- *
- * ::: note "Optional arguments"
- *     * @in: array of input images
- *     * @out: output image
- *     * @in_format: write input files like this
- *     * @out_format: write output filename like this
- *     * @log: stdout of command is returned here
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * [ctor@Image.system] runs a command, optionally passing a set of images in and
  * optionally getting an image back. The command's stdout is returned in @log.
@@ -349,7 +342,7 @@ vips_system_init(VipsSystem *system)
  * You can put a number between the `%` and the `s` to change the order
  * in which the substitution occurs.
  *
- * The command is executed with popen() and the output captured in @log.
+ * The command is executed with [`popen()`](man:popen(3)) and the output captured in @log.
  *
  * After the command finishes, if @out_format is set, the output image is
  * opened and returned in @out. You can append `[options]` to @out_format to
@@ -376,6 +369,13 @@ vips_system_init(VipsSystem *system)
  *         NULL))
  *     error ...
  * ```
+ *
+ * ::: tip "Optional arguments"
+ *     * @in: [struct@ArrayImage], array of input images
+ *     * @out: [class@Image], output, image
+ *     * @in_format: `gchararray`, write input files like this
+ *     * @out_format: `gchararray`, write output filename like this
+ *     * @log: `gchararray`, output, stdout of command is returned here
  *
  * Returns: 0 on success, -1 on failure.
  */

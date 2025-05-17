@@ -236,9 +236,6 @@ int vips__image_meta_copy(VipsImage *dst, const VipsImage *src);
 extern GMutex vips__global_lock;
 
 int vips_image_written(VipsImage *image);
-void vips_image_preeval(VipsImage *image);
-void vips_image_eval(VipsImage *image, guint64 processed);
-void vips_image_posteval(VipsImage *image);
 
 /* Defined in `vips.h`, unless building with `-Ddeprecated=false`
  */
@@ -345,7 +342,7 @@ typedef struct _VipsImagePixels {
 } VipsImagePixels;
 
 int vips__foreign_convert_saveable(VipsImage *in, VipsImage **ready,
-	VipsSaveable saveable, VipsBandFormat *format, VipsCoding *coding,
+	VipsForeignSaveable saveable, VipsBandFormat *format, VipsCoding *coding,
 	VipsArrayDouble *background);
 
 int vips_foreign_load(const char *filename, VipsImage **out, ...)

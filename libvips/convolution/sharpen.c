@@ -397,7 +397,7 @@ vips_sharpen_init(VipsSharpen *sharpen)
  * vips_sharpen: (method)
  * @in: input image
  * @out: (out): output image
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Selectively sharpen the L channel of a LAB image. The input image is
  * transformed to [enum@Vips.Interpretation.LABS].
@@ -409,34 +409,34 @@ vips_sharpen_init(VipsSharpen *sharpen)
  * The lookup table is formed like this:
  *
  * ```
- * .                     ^
- * .                  y2 |- - - - - -----------
- * .                     |         /
- * .                     |        / slope m2
- * .                     |    .../
- * .             -x1     | ...   |
- * . -------------------...---------------------->
- * .             |   ... |      x1
- * .             |... slope m1
- * .             /       |
- * .            / m2     |
- * .           /         |
- * .          /          |
- * .         /           |
- * .        /            |
- * . ______/ _ _ _ _ _ _ | -y3
- * .                     |
+ *                     ^
+ *                  y2 |- - - - - -----------
+ *                     |         /
+ *                     |        / slope m2
+ *                     |    .../
+ *             -x1     | ...   |
+ * -------------------...---------------------->
+ *             |   ... |      x1
+ *             |... slope m1
+ *             /       |
+ *            / m2     |
+ *           /         |
+ *          /          |
+ *         /           |
+ *        /            |
+ * ______/ _ _ _ _ _ _ | -y3
+ *                     |
  * ```
  *
  * For screen output, we suggest the following settings (the defaults):
  *
  * ```
- *   sigma == 0.5
- *   x1 == 2
- *   y2 == 10         (don't brighten by more than 10 L*)
- *   y3 == 20         (can darken by up to 20 L*)
- *   m1 == 0          (no sharpening in flat areas)
- *   m2 == 3          (some sharpening in jaggy areas)
+ * sigma == 0.5
+ * x1 == 2
+ * y2 == 10         (don't brighten by more than 10 L*)
+ * y3 == 20         (can darken by up to 20 L*)
+ * m1 == 0          (no sharpening in flat areas)
+ * m2 == 3          (some sharpening in jaggy areas)
  * ```
  *
  * If you want more or less sharpening, we suggest you just change the
@@ -450,12 +450,12 @@ vips_sharpen_init(VipsSharpen *sharpen)
  * resolution.
  *
  * ::: tip "Optional arguments"
- *     * @sigma: %gdouble, sigma of gaussian
- *     * @x1: %gdouble, flat/jaggy threshold
- *     * @y2: %gdouble, maximum amount of brightening
- *     * @y3: %gdouble, maximum amount of darkening
- *     * @m1: %gdouble, slope for flat areas
- *     * @m2: %gdouble, slope for jaggy areas
+ *     * @sigma: `gdouble`, sigma of gaussian
+ *     * @x1: `gdouble`, flat/jaggy threshold
+ *     * @y2: `gdouble`, maximum amount of brightening
+ *     * @y3: `gdouble`, maximum amount of darkening
+ *     * @m1: `gdouble`, slope for flat areas
+ *     * @m2: `gdouble`, slope for jaggy areas
  *
  * ::: seealso
  *     [method@Image.conv].

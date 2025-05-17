@@ -481,7 +481,7 @@ if pdfium_dep.found()
     pdf_loader = pdfium_dep
 endif
 
-libheif_dep = dependency('libheif', version: '>=1.4.0', required: get_option('heif'))
+libheif_dep = dependency('libheif', version: '>=1.11.0', required: get_option('heif'))
 libheif_module = false
 if libheif_dep.found()
     libheif_module = modules_enabled and not get_option('heif-module').disabled()
@@ -492,18 +492,6 @@ if libheif_dep.found()
         external_deps += libheif_dep
     endif
     cfg_var.set('HAVE_HEIF', true)
-    # added in 1.6.0
-    cfg_var.set('HAVE_HEIF_COLOR_PROFILE', cpp.has_function('heif_image_handle_get_raw_color_profile', prefix: '#include <libheif/heif.h>', dependencies: libheif_dep))
-    cfg_var.set('HAVE_HEIF_SET_MAX_IMAGE_SIZE_LIMIT', cpp.has_function('heif_context_set_maximum_image_size_limit', prefix: '#include <libheif/heif.h>', dependencies: libheif_dep))
-    # added in 1.7.0
-    cfg_var.set('HAVE_HEIF_DECODING_OPTIONS_CONVERT_HDR_TO_8BIT', cpp.has_member('struct heif_decoding_options', 'convert_hdr_to_8bit', prefix: '#include <libheif/heif.h>', dependencies: libheif_dep))
-    # heif_main_brand added in 1.4.0, but heif_avif appeared in 1.7 ... just check
-    # the libheif version number since testing for enums is annoying
-    cfg_var.set('HAVE_HEIF_AVIF', libheif_dep.version().version_compare('>=1.7.0'))
-    # added in 1.10.0
-    cfg_var.set('HAVE_HEIF_ENCODER_PARAMETER_GET_VALID_INTEGER_VALUES', cpp.has_function('heif_encoder_parameter_get_valid_integer_values', prefix: '#include <libheif/heif.h>', dependencies: libheif_dep))
-    # added in 1.11.0
-    cfg_var.set('HAVE_HEIF_ENCODING_OPTIONS_OUTPUT_NCLX_PROFILE', cpp.has_member('struct heif_encoding_options', 'output_nclx_profile', prefix: '#include <libheif/heif.h>', dependencies: libheif_dep))
     # heif_init added in 1.13.0
     cfg_var.set('HAVE_HEIF_INIT', libheif_dep.version().version_compare('>=1.13.0'))
     # heif_encoding_options.image_orientation added in 1.14.0
@@ -512,10 +500,13 @@ if libheif_dep.found()
     cfg_var.set('HAVE_HEIF_ERROR_SUCCESS', libheif_dep.version().version_compare('>=1.17.0'))
     # heif_get_disabled_security_limits added in 1.19.0
     cfg_var.set('HAVE_HEIF_GET_DISABLED_SECURITY_LIMITS', cpp.has_function('heif_get_disabled_security_limits', prefix: '#include <libheif/heif.h>', dependencies: libheif_dep))
+    # heif_security_limits.max_total_memory added in 1.20.0
+    cfg_var.set('HAVE_HEIF_MAX_TOTAL_MEMORY', cpp.has_member('struct heif_security_limits', 'max_total_memory', prefix: '#include <libheif/heif.h>', dependencies: libheif_dep))
 endif
 
-libjxl_dep = dependency('libjxl', version: '>=0.6', required: get_option('jpeg-xl'))
-libjxl_threads_dep = dependency('libjxl_threads', version: '>=0.6', required: get_option('jpeg-xl'))
+# need v0.11+ for chunked write
+libjxl_dep = dependency('libjxl', version: '>=0.11', required: get_option('jpeg-xl'))
+libjxl_threads_dep = dependency('libjxl_threads', version: '>=0.11', required: get_option('jpeg-xl'))
 libjxl_found = libjxl_dep.found() and libjxl_threads_dep.found()
 libjxl_module = false
 if libjxl_found
@@ -529,8 +520,6 @@ if libjxl_found
         external_deps += libjxl_threads_dep
     endif
     cfg_var.set('HAVE_LIBJXL', true)
-    cfg_var.set('HAVE_LIBJXL_0_7', libjxl_dep.version().version_compare('>=0.7'))
-    cfg_var.set('HAVE_LIBJXL_0_9', libjxl_dep.version().version_compare('>=0.9'))
 endif
 
 # only if pdfium not found

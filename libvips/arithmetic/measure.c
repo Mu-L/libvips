@@ -161,10 +161,10 @@ vips_measure_build(VipsObject *object)
 				 */
 				if (dev * 5 > fabs(avg) &&
 					fabs(avg) > 3)
-					g_warning(_("%s: "
-								"patch %d x %d, "
-								"band %d: "
-								"avg = %g, sdev = %g"),
+					g_warning("%s: "
+							  "patch %d x %d, "
+							  "band %d: "
+							  "avg = %g, sdev = %g",
 						class->nickname,
 						i, j, b, avg, dev);
 
@@ -257,7 +257,7 @@ vips_measure_init(VipsMeasure *measure)
  * @out: (out): array of measurements
  * @h: patches across chart
  * @v: patches down chart
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Analyse a grid of colour patches, producing an array of patch averages.
  * The mask has a row for each measured patch and a column for each image
@@ -270,10 +270,10 @@ vips_measure_init(VipsMeasure *measure)
  * position of the chart.
  *
  * ::: tip "Optional arguments"
- *     * @left: area of image containing chart
- *     * @top: area of image containing chart
- *     * @width: area of image containing chart
- *     * @height: area of image containing chart
+ *     * @left: `gint`, area of image containing chart
+ *     * @top: `gint`, area of image containing chart
+ *     * @width: `gint`, area of image containing chart
+ *     * @height: `gint`, area of image containing chart
  *
  * ::: seealso
  *     [method@Image.avg], [method@Image.deviate].

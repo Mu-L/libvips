@@ -119,7 +119,7 @@
 /* -1 on a pipe isn't actually unbounded. Have a limit to prevent
  * huge sources accidentally filling memory.
  *
- * This can be configured with [func@pipe_read_limit_set].
+ * This can be configured with vips_pipe_read_limit_set().
  */
 static gint64 vips__pipe_read_limit = 1024 * 1024 * 1024;
 
@@ -164,7 +164,7 @@ vips_source_test_seek(VipsSource *source)
 		/* Can we seek this input?
 		 *
 		 * We need to call the method directly rather than via
-		 * [func@source_seek] etc. or we might trigger seek emulation.
+		 * vips_source_seek() etc. or we might trigger seek emulation.
 		 */
 		if (source->data ||
 			class->seek(source, 0, SEEK_CUR) != -1) {
@@ -424,7 +424,7 @@ vips_source_init(VipsSource *source)
  * @descriptor: read from this file descriptor
  *
  * Create an source attached to a file descriptor. @descriptor is
- * closed with close() when source is finalized.
+ * closed with [`close()`](man:close(2)) when source is finalized.
  *
  * Returns: a new source.
  */
@@ -740,7 +740,7 @@ vips_source_decode(VipsSource *source)
 		VIPS_FREEF(g_byte_array_unref, source->sniff);
 
 		/* Now decode is set, header_bytes will be freed once it's
-		 * exhausted, see [func@source_read].
+		 * exhausted, see vips_source_read().
 		 */
 	}
 
@@ -780,7 +780,7 @@ vips_source_print(VipsSource *source)
  * Return the number of bytes actually read. If all bytes have been read from
  * the file, return 0.
  *
- * Arguments exactly as read(2).
+ * Arguments exactly as [`read()`](man:read(2)).
  *
  * Returns: the number of bytes read, 0 on end of file, -1 on error.
  */
@@ -1023,10 +1023,10 @@ vips_source_descriptor_to_memory(VipsSource *source)
  * @source: source to operate on
  *
  * Some sources can be efficiently mapped into memory.
- * You can still use [method@Source.map] if this function returns %FALSE,
+ * You can still use [method@Source.map] if this function returns `FALSE`,
  * but it will be slow.
  *
- * Returns: %TRUE if the source can be efficiently mapped into memory.
+ * Returns: `TRUE` if the source can be efficiently mapped into memory.
  */
 gboolean
 vips_source_is_mappable(VipsSource *source)
@@ -1049,13 +1049,13 @@ vips_source_is_mappable(VipsSource *source)
  * @source: source to operate on
  *
  * Test if this source is a simple file with support for seek. Named pipes,
- * for example, will fail this test. If TRUE, you can use
+ * for example, will fail this test. If `TRUE`, you can use
  * [method@Connection.filename] to find the filename.
  *
  * Use this to add basic source support for older loaders which can only work
  * on files.
  *
- * Returns: %TRUE if the source is a simple file.
+ * Returns: `TRUE` if the source is a simple file.
  */
 gboolean
 vips_source_is_file(VipsSource *source)
@@ -1073,7 +1073,7 @@ vips_source_is_file(VipsSource *source)
 /**
  * vips_source_map:
  * @source: source to operate on
- * @length: return the file length here, or NULL
+ * @length: return the file length here, or `NULL`
  *
  * Map the source entirely into memory and return a pointer to the
  * start. If @length is non-NULL, the source size is written to it.
@@ -1083,7 +1083,7 @@ vips_source_is_file(VipsSource *source)
  *
  * The pointer is valid for as long as @source is alive.
  *
- * Returns: a pointer to the start of the file contents, or NULL on error.
+ * Returns: a pointer to the start of the file contents, or `NULL` on error.
  */
 const void *
 vips_source_map(VipsSource *source, size_t *length)
@@ -1142,7 +1142,7 @@ vips_source_map_cb(void *a, VipsArea *area)
  * Just like [method@Source.map], but return a [struct@Blob] containing the
  * pointer. @source will stay alive as long as the result is alive.
  *
- * Returns: a new [struct@Blob] containing the data, or NULL on error.
+ * Returns: a new [struct@Blob] containing the data, or `NULL` on error.
  */
 VipsBlob *
 vips_source_map_blob(VipsSource *source)
@@ -1170,7 +1170,7 @@ vips_source_map_blob(VipsSource *source)
  * @whence: seek relative to this point
  *
  * Move the file read position. You can't call this after pixel decode starts.
- * The arguments are exactly as lseek(2).
+ * The arguments are exactly as [`lseek()`](man:lseek(2)).
  *
  * Returns: the new file position, or -1 on error.
  */
@@ -1381,9 +1381,9 @@ vips_source_sniff_at_most(VipsSource *source,
  * @length: number of bytes to sniff
  *
  * Return a pointer to the first few bytes of the file. If the file is too
- * short, return NULL.
+ * short, return `NULL`.
  *
- * Returns: a pointer to the bytes at the start of the file, or NULL on error.
+ * Returns: a pointer to the bytes at the start of the file, or `NULL` on error.
  */
 unsigned char *
 vips_source_sniff(VipsSource *source, size_t length)

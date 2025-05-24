@@ -345,13 +345,10 @@ vips_worley_init(VipsWorley *worley)
  * @out: (out): output image
  * @width: horizontal size
  * @height: vertical size
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
- * Create a one-band float image of Worley noise.
- *
- * See:
- *
- * https://en.wikipedia.org/wiki/Worley_noise
+ * Create a one-band float image of [Worley
+ * noise](https://en.wikipedia.org/wiki/Worley_noise).
  *
  * Use @cell_size to set the size of the cells from which the image is
  * constructed. The default is 256 x 256.
@@ -359,7 +356,7 @@ vips_worley_init(VipsWorley *worley)
  * If @width and @height are multiples of @cell_size, the image will tessellate.
  *
  * ::: tip "Optional arguments"
- *     * @cell_size: %gint, size of Worley cells
+ *     * @cell_size: `gint`, size of Worley cells
  *
  * ::: seealso
  *     [ctor@Image.perlin], [ctor@Image.fractsurf], [ctor@Image.gaussnoise].

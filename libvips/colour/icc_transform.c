@@ -108,8 +108,8 @@
  * @VIPS_INTENT_ABSOLUTE: absolute colorimetric rendering intent
  * @VIPS_INTENT_AUTO: the rendering intent that the profile suggests
  *
- * The rendering intent. #VIPS_INTENT_ABSOLUTE is best for
- * scientific work, #VIPS_INTENT_RELATIVE is usually best for
+ * The rendering intent. [enum@Vips.Intent.ABSOLUTE] is best for
+ * scientific work, [enum@Vips.Intent.RELATIVE] is usually best for
  * accurate communication with other imaging libraries.
  */
 
@@ -609,7 +609,7 @@ vips_icc_load_profile_blob(VipsIcc *icc, VipsBlob *blob,
 
 #ifdef DEBUG
 	printf("loading %s profile, intent %s, from blob %p\n",
-		direction == LCMS_USED_AS_INPUT ? _("input") : _("output"),
+		direction == LCMS_USED_AS_INPUT ? "input" : "output",
 		vips_enum_nick(VIPS_TYPE_INTENT, icc->intent),
 		blob);
 #endif /*DEBUG*/
@@ -634,11 +634,11 @@ vips_icc_load_profile_blob(VipsIcc *icc, VipsBlob *blob,
 
 	if (icc->intent != VIPS_INTENT_AUTO &&
 		icc->selected_intent != icc->intent)
-		g_warning(_("fallback to suggested %s intent, as profile "
-					"does not support %s %s intent"),
+		g_warning("fallback to suggested %s intent, as profile "
+				  "does not support %s %s intent",
 			vips_enum_nick(VIPS_TYPE_INTENT, icc->selected_intent),
 			vips_enum_nick(VIPS_TYPE_INTENT, icc->intent),
-			direction == LCMS_USED_AS_INPUT ? _("input") : _("output"));
+			direction == LCMS_USED_AS_INPUT ? "input" : "output");
 
 #ifdef DEBUG
 	vips_icc_print_profile("loaded from blob to make", profile);
@@ -659,9 +659,9 @@ vips_icc_load_profile_blob(VipsIcc *icc, VipsBlob *blob,
 
 	if (!cmsIsIntentSupported(profile, icc->selected_intent, direction)) {
 		VIPS_FREEF(cmsCloseProfile, profile);
-		g_warning(_("profile does not support %s %s intent"),
+		g_warning("profile does not support %s %s intent",
 			vips_enum_nick(VIPS_TYPE_INTENT, icc->selected_intent),
-			direction == LCMS_USED_AS_INPUT ? _("input") : _("output"));
+			direction == LCMS_USED_AS_INPUT ? "input" : "output");
 		return NULL;
 	}
 
@@ -907,8 +907,8 @@ decode_xyz(guint16 *fixed, float *xyz, int n)
 		Z *= SCALE;
 
 		/* Transform XYZ D50 to D65, chromatic adaption is done with the
-		 * Bradford transformation.
-		 * See: https://fujiwaratko.sakura.ne.jp/infosci/colorspace/bradford_e.html
+		 * Bradford transformation. See:
+		 * https://fujiwaratko.sakura.ne.jp/infosci/colorspace/bradford_e.html
 		 */
 		xyz[0] = 0.955513F * X +
 			-0.023073F * Y +
@@ -1070,8 +1070,8 @@ encode_xyz(float *in, float *out, int n)
 		float Z = in[2] / SCALE;
 
 		/* Transform XYZ D65 to D50, chromatic adaption is done with the
-		 * Bradford transformation.
-		 * See: https://fujiwaratko.sakura.ne.jp/infosci/colorspace/bradford_e.html
+		 * Bradford transformation. See:
+		 * https://fujiwaratko.sakura.ne.jp/infosci/colorspace/bradford_e.html
 		 */
 		out[0] = 1.047886F * X +
 			0.022919F * Y +
@@ -1438,7 +1438,7 @@ vips_icc_is_compatible_profile(VipsImage *image,
  * vips_icc_import: (method)
  * @in: input image
  * @out: (out): output image
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Import an image from device space to D65 LAB with an ICC profile.
  *
@@ -1448,8 +1448,8 @@ vips_icc_is_compatible_profile(VipsImage *image,
  *
  * 1. If @embedded is set, libvips will try to use any profile in the input
  *    image metadata. You can test for the presence of an embedded profile
- *    with [method@Image.get_typeof] with #VIPS_META_ICC_NAME as an
- *    argument. This will return %GType 0 if there is no profile.
+ *    with [method@Image.get_typeof] with [const@META_ICC_NAME] as an
+ *    argument. This will return [alias@GObject.Type] 0 if there is no profile.
  *
  * 2. Otherwise, if @input_profile is set, libvips will try to load a
  *    profile from the named file. This can also be the name of one of the
@@ -1464,9 +1464,9 @@ vips_icc_is_compatible_profile(VipsImage *image,
  * ::: tip "Optional arguments"
  *     * @pcs: [enum@PCS], use XYZ or LAB PCS
  *     * @intent: [enum@Intent], transform with this intent
- *     * @black_point_compensation: %gboolean, enable black point compensation
- *     * @embedded: %gboolean, use profile embedded in input image
- *     * @input_profile: %gchararray, get the input profile from here
+ *     * @black_point_compensation: `gboolean`, enable black point compensation
+ *     * @embedded: `gboolean`, use profile embedded in input image
+ *     * @input_profile: `gchararray`, get the input profile from here
  *
  * Returns: 0 on success, -1 on error.
  */
@@ -1487,7 +1487,7 @@ vips_icc_import(VipsImage *in, VipsImage **out, ...)
  * vips_icc_export: (method)
  * @in: input image
  * @out: (out): output image
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Export an image from D65 LAB to device space with an ICC profile.
  *
@@ -1500,11 +1500,11 @@ vips_icc_import(VipsImage *in, VipsImage **out, ...)
  * enabled.
  *
  * ::: tip "Optional arguments"
- *     * @pcs: [enum@PCS],  use XYZ or LAB PCS
+ *     * @pcs: [enum@PCS], use XYZ or LAB PCS
  *     * @intent: [enum@Intent], transform with this intent
- *     * @black_point_compensation: %gboolean, enable black point compensation
- *     * @output_profile: %gchararray, get the output profile from here
- *     * @depth: %gint, depth of output image in bits
+ *     * @black_point_compensation: `gboolean`, enable black point compensation
+ *     * @output_profile: `gchararray`, get the output profile from here
+ *     * @depth: `gint`, depth of output image in bits
  *
  * Returns: 0 on success, -1 on error.
  */
@@ -1526,7 +1526,7 @@ vips_icc_export(VipsImage *in, VipsImage **out, ...)
  * @in: input image
  * @out: (out): output image
  * @output_profile: get the output profile from here
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Transform an image with a pair of ICC profiles.
  *
@@ -1537,8 +1537,8 @@ vips_icc_export(VipsImage *in, VipsImage **out, ...)
  *
  * 1. If @embedded is set, libvips will try to use any profile in the input
  *    image metadata. You can test for the presence of an embedded profile
- *    with [method@Image.get_typeof] with #VIPS_META_ICC_NAME as an
- *    argument. This will return %GType 0 if there is no profile.
+ *    with [method@Image.get_typeof] with [const@META_ICC_NAME] as an
+ *    argument. This will return [alias@GObject.Type] 0 if there is no profile.
  *
  * 2. Otherwise, if @input_profile is set, libvips will try to load a
  *    profile from the named file. This can also be the name of one of the
@@ -1552,7 +1552,7 @@ vips_icc_export(VipsImage *in, VipsImage **out, ...)
  *
  * @depth defaults to 8, or 16 if @in is a 16-bit image.
  *
- * The output image has the output profile attached to the #VIPS_META_ICC_NAME
+ * The output image has the output profile attached to the [const@META_ICC_NAME]
  * field.
  *
  * Use [method@Image.icc_import] and [method@Image.icc_export] to do either
@@ -1561,10 +1561,10 @@ vips_icc_export(VipsImage *in, VipsImage **out, ...)
  * ::: tip "Optional arguments"
  *     * @pcs: [enum@PCS], use XYZ or LAB PCS
  *     * @intent: [enum@Intent], transform with this intent
- *     * @black_point_compensation: %gboolean, enable black point compensation
- *     * @embedded: %gboolean, use profile embedded in input image
- *     * @input_profile: %gchararray, get the input profile from here
- *     * @depth: %gint, depth of output image in bits
+ *     * @black_point_compensation: `gboolean`, enable black point compensation
+ *     * @embedded: `gboolean`, use profile embedded in input image
+ *     * @input_profile: `gchararray`, get the input profile from here
+ *     * @depth: `gint`, depth of output image in bits
  *
  * Returns: 0 on success, -1 on error.
  */

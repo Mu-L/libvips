@@ -175,7 +175,7 @@ vips_gaussblur_init(VipsGaussblur *gaussblur)
  * @in: input image
  * @out: (out): output image
  * @sigma: how large a mask to use
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * This operator runs [ctor@Image.gaussmat] and [method@Image.convsep] for
  * you on an image.
@@ -185,7 +185,7 @@ vips_gaussblur_init(VipsGaussblur *gaussblur)
  *
  * ::: tip "Optional arguments"
  *     * @precision: [enum@Precision], precision for blur, default int
- *     * @min_ampl: minimum amplitude, default 0.2
+ *     * @min_ampl: `gdouble`, minimum amplitude, default 0.2
  *
  * ::: seealso
  *     [ctor@Image.gaussmat], [method@Image.convsep].

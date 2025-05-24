@@ -394,7 +394,8 @@ vips_col_scRGB2BW(int range, int *lut, float R, float G, float B,
 	int Yi;
 	float v;
 
-	/* CIE linear luminance function, see https://en.wikipedia.org/wiki/Grayscale#Colorimetric_(perceptual_luminance-preserving)_conversion_to_grayscale
+	/* CIE linear luminance function, see
+	 * https://en.wikipedia.org/wiki/Grayscale#Colorimetric_(perceptual_luminance-preserving)_conversion_to_grayscale
 	 */
 	Y = 0.2126F * R + 0.7152F * G + 0.0722F * B;
 
@@ -571,9 +572,9 @@ vips_LabQ2sRGB_init(VipsLabQ2sRGB *LabQ2sRGB)
  * vips_LabQ2sRGB: (method)
  * @in: input image
  * @out: (out): output image
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
- * Unpack a LabQ ([enum@Vips.Coding.LABQ)] image to a three-band short image.
+ * Unpack a LabQ ([enum@Vips.Coding.LABQ]) image to a three-band short image.
  *
  * ::: seealso
  *     [method@Image.LabS2LabQ], [method@Image.LabQ2sRGB], [method@Image.rad2float].

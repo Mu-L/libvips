@@ -200,7 +200,6 @@ vips_foreign_save_heif_write_metadata(VipsForeignSaveHeif *heif)
 	return 0;
 }
 
-#ifdef HAVE_HEIF_COLOR_PROFILE
 static int
 vips_foreign_save_heif_add_icc(VipsForeignSaveHeif *heif,
 	const void *profile, size_t length)
@@ -261,7 +260,6 @@ vips_foreign_save_heif_add_orig_icc(VipsForeignSaveHeif *heif)
 
 	return 0;
 }
-#endif /*HAVE_HEIF_COLOR_PROFILE*/
 
 static int
 vips_foreign_save_heif_write_page(VipsForeignSaveHeif *heif, int page)
@@ -270,11 +268,8 @@ vips_foreign_save_heif_write_page(VipsForeignSaveHeif *heif, int page)
 
 	struct heif_error error;
 	struct heif_encoding_options *options;
-#ifdef HAVE_HEIF_ENCODING_OPTIONS_OUTPUT_NCLX_PROFILE
 	struct heif_color_profile_nclx *nclx = NULL;
-#endif
 
-#ifdef HAVE_HEIF_COLOR_PROFILE
 	/* A profile supplied as an argument overrides an embedded
 	 * profile.
 	 */
@@ -286,12 +281,10 @@ vips_foreign_save_heif_write_page(VipsForeignSaveHeif *heif, int page)
 		if (vips_foreign_save_heif_add_orig_icc(heif))
 			return -1;
 	}
-#endif /*HAVE_HEIF_COLOR_PROFILE*/
 
 	options = heif_encoding_options_alloc();
 	options->save_alpha_channel = save->ready->Bands > 3;
 
-#ifdef HAVE_HEIF_ENCODING_OPTIONS_OUTPUT_NCLX_PROFILE
 	/* Matrix coefficients have to be identity (CICP x/y/0) in lossless
 	 * mode.
 	 */
@@ -308,7 +301,6 @@ vips_foreign_save_heif_write_page(VipsForeignSaveHeif *heif, int page)
 		 */
 		options->macOS_compatibility_workaround_no_nclx_profile = 0;
 	}
-#endif /*HAVE_HEIF_ENCODING_OPTIONS_OUTPUT_NCLX_PROFILE*/
 
 #ifdef HAVE_HEIF_ENCODING_OPTIONS_IMAGE_ORIENTATION
 	/* EXIF orientation is informational in the HEIF specification.
@@ -320,7 +312,7 @@ vips_foreign_save_heif_write_page(VipsForeignSaveHeif *heif, int page)
 
 #ifdef DEBUG
 	{
-		GTimer *timer = [func@GLib.timer_new];
+		GTimer *timer = g_timer_new();
 
 		printf("calling heif_context_encode_image() ...\n");
 #endif /*DEBUG*/
@@ -335,9 +327,7 @@ vips_foreign_save_heif_write_page(VipsForeignSaveHeif *heif, int page)
 #endif /*DEBUG*/
 
 	heif_encoding_options_free(options);
-#ifdef HAVE_HEIF_ENCODING_OPTIONS_OUTPUT_NCLX_PROFILE
 	VIPS_FREEF(heif_nclx_color_profile_free, nclx);
-#endif
 
 	if (error.code) {
 		vips__heif_error(&error);
@@ -409,7 +399,7 @@ vips_foreign_save_heif_pack(VipsForeignSaveHeif *heif,
 		for (i = 0; i < ne; i++) {
 			guint16 v = *((gushort *) p) >> shift;
 
-			q[i] = v;
+			q[i] = VIPS_MIN(v, UCHAR_MAX);
 
 			p += 2;
 		}
@@ -620,7 +610,6 @@ vips_foreign_save_heif_build(VipsObject *object)
 		return -1;
 	}
 
-#ifdef HAVE_HEIF_ENCODER_PARAMETER_GET_VALID_INTEGER_VALUES
 	for (param = heif_encoder_list_parameters(heif->encoder);
 		*param; param++) {
 		int have_minimum;
@@ -646,7 +635,6 @@ vips_foreign_save_heif_build(VipsObject *object)
 			return -1;
 		}
 	}
-#endif /*HAVE_HEIF_ENCODER_PARAMETER_GET_VALID_INTEGER_VALUES*/
 
 	/* Try to enable auto_tiles. This can make AVIF encoding a lot faster,
 	 * with only a very small increase in file size.
@@ -767,7 +755,8 @@ vips_foreign_save_heif_class_init(VipsForeignSaveHeifClass *class)
 	object_class->description = _("save image in HEIF format");
 	object_class->build = vips_foreign_save_heif_build;
 
-	save_class->saveable = VIPS_SAVEABLE_RGBA_ONLY;
+	save_class->saveable =
+		VIPS_FOREIGN_SAVEABLE_RGB | VIPS_FOREIGN_SAVEABLE_ALPHA;
 	save_class->format_table = vips_heif_bandfmt;
 
 	VIPS_ARG_INT(class, "Q", 10,

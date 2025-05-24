@@ -130,7 +130,7 @@ vips__open_image_read(const char *filename)
 {
 	int fd;
 
-	/* Try to open read-write, so that calls to [method@Image.inplace] will
+	/* Try to open read-write, so that calls to vips_image_inplace() will
 	 * work. When we later mmap this file, we set read-only, so there
 	 * is little danger of scrubbing over files we own.
 	 */
@@ -170,7 +170,7 @@ vips__open_image_write(const char *filename, gboolean temp)
 	 *
 	 * This can fail since not all filesystems support it. In this case,
 	 * we open as a regular file and rely on the delete-on-close
-	 * mechanism, see [method@Image.delete].
+	 * mechanism, see vips_image_delete().
 	 */
 	if (temp) {
 		char *dirname;
@@ -372,7 +372,7 @@ vips__read_header_bytes(VipsImage *im, unsigned char *from)
 	 * pixel interpretation, don't clip them.
 	 */
 
-	/* Coding values imply Bands and BandFmt settings --- make sure they
+	/* Coding values imply Bands and BandFmt settings -- make sure they
 	 * are sane.
 	 */
 	switch (im->Coding) {
@@ -932,7 +932,7 @@ vips__xml_properties_meta(VipsImage *image,
 }
 
 /* Make the xml we write to vips-properties in dzsave, or to TIFF. A simple
- * dump of all vips metadata. Free with [func@GLib.free].
+ * dump of all vips metadata. Free with g_free().
  */
 char *
 vips__xml_properties(VipsImage *image)
@@ -1038,8 +1038,8 @@ vips_image_open_input(VipsImage *image)
 		return -1;
 	image->file_length = rsize;
 	if (psize > rsize)
-		g_warning(_("unable to read data for \"%s\", %s"),
-			image->filename, _("file has been truncated"));
+		g_warning("unable to read data for \"%s\", %s",
+			image->filename, "file has been truncated");
 
 	/* Set demand style. This suits a disc file we read sequentially.
 	 */
@@ -1050,7 +1050,7 @@ vips_image_open_input(VipsImage *image)
 	 * harmless.
 	 */
 	if (readhist(image)) {
-		g_warning(_("error reading vips image metadata: %s"),
+		g_warning("error reading vips image metadata: %s",
 			vips_error_buffer());
 		vips_error_clear();
 	}

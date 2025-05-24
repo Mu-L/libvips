@@ -1118,7 +1118,7 @@ vips_reducev_init(VipsReducev *reducev)
  * @in: input image
  * @out: (out): output image
  * @vshrink: vertical reduce
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Reduce @in vertically by a float factor.
  *
@@ -1137,8 +1137,9 @@ vips_reducev_init(VipsReducev *reducev)
  * be updated by the application.
  *
  * ::: tip "Optional arguments"
- *     * @kernel: [enum@Kernel], to use to interpolate (default: lanczos3)
- *     * @gap: %gboolean, reducing gap to use (default: 0.0)
+ *     * @kernel: [enum@Kernel], kernel to interpolate with
+ *       (default: [enum@Vips.Kernel.LANCZOS3])
+ *     * @gap: `gboolean`, reducing gap to use (default: 0.0)
  *
  * ::: seealso
  *     [method@Image.shrink], [method@Image.resize], [method@Image.affine].

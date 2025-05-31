@@ -356,14 +356,14 @@ vips_region_summary(VipsObject *object, VipsBuf *buf)
 
 /* If a region is being created in one thread (eg. the main thread) and then
  * used in another (eg. a worker thread), the new thread needs to tell VIPS
- * to stop sanity [func@GLib.assert] fails. The previous owner needs to
- * [func@_region_no_ownership] before we can call this.
+ * to stop sanity g_assert() fails. The previous owner needs to
+ * vips__region_no_ownership() before we can call this.
  */
 void
 vips__region_take_ownership(VipsRegion *region)
 {
 	/* Lock so that there's a memory barrier with the thread doing the
-	 * [func@_region_no_ownership] before us.
+	 * vips__region_no_ownership() before us.
 	 */
 	VIPS_GATE_START("vips__region_take_ownership: wait");
 
@@ -785,9 +785,9 @@ vips_region_region(VipsRegion *reg,
  * Do two regions point to the same piece of image? ie.
  *
  * ```c
- * 	VIPS_REGION_ADDR(reg1, x, y) == VIPS_REGION_ADDR(reg2, x, y) &&
- * 	*VIPS_REGION_ADDR(reg1, x, y) ==
- * 		*VIPS_REGION_ADDR(reg2, x, y) for all x, y, reg1, reg2.
+ * VIPS_REGION_ADDR(reg1, x, y) == VIPS_REGION_ADDR(reg2, x, y) &&
+ * *VIPS_REGION_ADDR(reg1, x, y) ==
+ *     *VIPS_REGION_ADDR(reg2, x, y) for all x, y, reg1, reg2.
  * ```
  *
  * Returns: non-zero on equality.
@@ -896,7 +896,7 @@ vips_region_fill(VipsRegion *reg,
  * @reg->valid.
  *
  * For int images, @value is
- * passed to memset(), so it usually needs to be 0 or 255. For float images,
+ * passed to [`memset()`](man:memset(3)), so it usually needs to be 0 or 255. For float images,
  * value is cast to a float and copied in to each band element.
  *
  * @r is clipped against
@@ -1799,7 +1799,7 @@ vips_region_prepare_to(VipsRegion *reg,
 
 	/* clip r first against the size of reg->im, then again against the
 	 * memory we have available to write to on dest. Just like
-	 * [method@Region.region]
+	 * vips_region_region()
 	 */
 	image.top = 0;
 	image.left = 0;
@@ -1897,7 +1897,7 @@ vips_region_prepare_to(VipsRegion *reg,
 	 * was).
 	 *
 	 * We need this extra thing here because, unlike
-	 * [method@Region.prepare], we don't [method@Region.buffer] dest before
+	 * vips_region_prepare(), we don't vips_region_buffer() dest before
 	 * writing it.
 	 */
 	dest->invalid = FALSE;
@@ -1905,7 +1905,7 @@ vips_region_prepare_to(VipsRegion *reg,
 	return 0;
 }
 
-/* Don't use this, use [func@reorder_prepare_many] instead.
+/* Don't use this, use vips_reorder_prepare_many() instead.
  */
 int
 vips_region_prepare_many(VipsRegion **reg, const VipsRect *r)

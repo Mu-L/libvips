@@ -223,7 +223,7 @@ vips_rank_generate_uchar(VipsRegion *out_region,
 			}
 			q[b] = i;
 
-			/* Adapt histogram --- remove the pels from
+			/* Adapt histogram -- remove the pels from
 			 * the left hand column, add in pels for a
 			 * new right-hand column.
 			 */
@@ -603,7 +603,7 @@ vips_rank_init(VipsRank *rank)
  * @width: width of region
  * @height: height of region
  * @index: select pixel
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * [method@Image.rank] does rank filtering on an image. A window of size @width by
  * @height is passed over the image. At each position, the pixels inside the
@@ -617,7 +617,9 @@ vips_rank_init(VipsRank *rank)
  *
  * For a median filter with mask size m (3 for 3x3, 5 for 5x5, etc.) use
  *
- *  vips_rank(in, out, m, m, m * m / 2);
+ * ```c
+ * vips_rank(in, out, m, m, m * m / 2);
+ * ```
  *
  * The special cases n == 0 and n == m * m - 1 are useful dilate and
  * expand operators.
@@ -646,11 +648,13 @@ vips_rank(VipsImage *in, VipsImage **out,
  * @in: input image
  * @out: (out): output image
  * @size: size of region
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * A convenience function equivalent to:
  *
- *  vips_rank(in, out, size, size, (size * size) / 2);
+ * ```c
+ * vips_rank(in, out, size, size, (size * size) / 2);
+ * ```
  *
  * ::: seealso
  *     [method@Image.rank].

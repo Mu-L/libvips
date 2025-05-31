@@ -1213,7 +1213,7 @@ vips_convi_build(VipsObject *object)
 	convolution->out->Xoffset = 0;
 	convolution->out->Yoffset = 0;
 
-	/* Prepare output. Consider a 7x7 mask and a 7x7 image --- the output
+	/* Prepare output. Consider a 7x7 mask and a 7x7 image -- the output
 	 * would be 1x1.
 	 */
 	convolution->out->Xsize -= M->Xsize - 1;
@@ -1262,17 +1262,17 @@ vips_convi_init(VipsConvi *convi)
  * @in: input image
  * @out: (out): output image
  * @mask: convolve with this mask
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Integer convolution. This is a low-level operation, see [method@Image.conv] for
  * something more convenient.
  *
- * @mask is converted to an integer mask with rint() of each element, rint of
+ * @mask is converted to an integer mask with `rint()` of each element, rint of
  * scale and rint of offset. Each output pixel is then calculated as
  *
- * |[
+ * ```
  * sigma[i]{pixel[i] * mask[i]} / scale + offset
- * ]|
+ * ```
  *
  * The output image always has the same [enum@BandFormat] as the input image.
  *

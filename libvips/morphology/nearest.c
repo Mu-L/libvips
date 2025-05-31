@@ -327,7 +327,7 @@ vips_fill_nearest_init(VipsFillNearest *nearest)
  * vips_fill_nearest: (method)
  * @in: image to test
  * @out: image with zero pixels filled with the nearest non-zero pixel
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Fill outwards from every non-zero pixel in @in, setting pixels in @distance
  * and @value.
@@ -340,7 +340,7 @@ vips_fill_nearest_init(VipsFillNearest *nearest)
  * format as @in.
  *
  * ::: tip "Optional arguments"
- *     * @distance: [class@Image], output image of distance to nearest
+ *     * @distance: [class@Image], output, image of distance to nearest
  *       non-zero pixel
  *
  * ::: seealso

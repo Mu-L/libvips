@@ -64,7 +64,7 @@
  * vips_magickload:
  * @filename: file to load
  * @out: (out): decompressed image
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Read in an image using libMagick, the ImageMagick library.
  *
@@ -75,7 +75,7 @@
  * attached to the libMagick image is copied on to the VIPS image.
  *
  * The reader should also work with most versions of GraphicsMagick. See the
- * "--with-magickpackage" configure option.
+ * `-Dmagick-package` configure option.
  *
  * The file format is usually guessed from the filename suffix, or sniffed
  * from the file contents.
@@ -90,13 +90,13 @@
  * on the imagemagick website.
  *
  * ::: tip "Optional arguments"
- *     * @page: %gint, load from this page
- *     * @n: %gint, load this many pages
- *     * @density: string, canvas resolution for rendering vector formats
+ *     * @page: `gint`, load from this page
+ *     * @n: `gint`, load this many pages
+ *     * @density: `gchararray`, canvas resolution for rendering vector formats
  *       like SVG
  *
  * ::: seealso
- *     vips_image_new_from_file().
+ *     [ctor@Image.new_from_file].
  *
  * Returns: 0 on success, -1 on error.
  */
@@ -118,7 +118,7 @@ vips_magickload(const char *filename, VipsImage **out, ...)
  * @buf: (array length=len) (element-type guint8): memory area to load
  * @len: size of memory area
  * @out: (out): image to write
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Read an image memory block using libMagick into a VIPS image. Exactly as
  * [ctor@Image.magickload], but read from a memory source.
@@ -127,9 +127,9 @@ vips_magickload(const char *filename, VipsImage **out, ...)
  * [signal@Object::postclose] signal on @out is a good place to free.
  *
  * ::: tip "Optional arguments"
- *     * @page: %gint, load from this page
- *     * @n: %gint, load this many pages
- *     * @density: string, canvas resolution for rendering vector formats
+ *     * @page: `gint`, load from this page
+ *     * @n: `gint`, load this many pages
+ *     * @density: `gchararray`, canvas resolution for rendering vector formats
  *       like SVG
  *
  * ::: seealso

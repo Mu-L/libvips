@@ -102,13 +102,13 @@ typedef VipsConversionClass VipsSequentialClass;
 G_DEFINE_TYPE(VipsSequential, vips_sequential, VIPS_TYPE_CONVERSION);
 
 static void
-vips_sequential_dispose(GObject *gobject)
+vips_sequential_finalize(GObject *gobject)
 {
 	VipsSequential *sequential = (VipsSequential *) gobject;
 
 	g_mutex_clear(&sequential->lock);
 
-	G_OBJECT_CLASS(vips_sequential_parent_class)->dispose(gobject);
+	G_OBJECT_CLASS(vips_sequential_parent_class)->finalize(gobject);
 }
 
 static int
@@ -231,7 +231,7 @@ vips_sequential_class_init(VipsSequentialClass *class)
 
 	VIPS_DEBUG_MSG("vips_sequential_class_init\n");
 
-	gobject_class->dispose = vips_sequential_dispose;
+	gobject_class->finalize = vips_sequential_finalize;
 	gobject_class->set_property = vips_object_set_property;
 	gobject_class->get_property = vips_object_get_property;
 
@@ -280,7 +280,7 @@ vips_sequential_init(VipsSequential *sequential)
  * vips_sequential: (method)
  * @in: input image
  * @out: (out): output image
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * This operation behaves rather like [method@Image.copy] between images
  * @in and @out, except that it checks that pixels on @in are only requested
@@ -291,7 +291,7 @@ vips_sequential_init(VipsSequential *sequential)
  * [method@Image.sequential] uses. The default value is 1.
  *
  * ::: tip "Optional arguments"
- *     * @tile_height: %gint, height of cache strips
+ *     * @tile_height: `gint`, height of cache strips
  *
  * ::: seealso
  *     [method@Image.linecache], [method@Image.tilecache].

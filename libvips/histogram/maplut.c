@@ -107,7 +107,7 @@ vips_maplut_posteval(VipsImage *image, VipsProgress *progress,
 	VipsMaplut *maplut)
 {
 	if (maplut->overflow)
-		g_warning(_("%d overflows detected"), maplut->overflow);
+		g_warning("%d overflows detected", maplut->overflow);
 }
 
 /* Our sequence value: the region this sequence is using, and local stats.
@@ -777,16 +777,16 @@ vips_maplut_init(VipsMaplut *maplut)
  * @in: input image
  * @out: (out): output image
  * @lut: look-up table
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Map an image through another image acting as a LUT (Look Up Table).
  * The lut may have any type and the output image will be that type.
  *
  * The input image will be cast to one of the unsigned integer types, that is,
- * VIPS_FORMAT_UCHAR, VIPS_FORMAT_USHORT or VIPS_FORMAT_UINT.
+ * [enum@Vips.BandFormat.UCHAR], [enum@Vips.BandFormat.USHORT] or [enum@Vips.BandFormat.UINT].
  *
  * If @lut is too small for the input type (for example, if @in is
- * VIPS_FORMAT_UCHAR but @lut only has 100 elements), the lut is padded out
+ * [enum@Vips.BandFormat.UCHAR] but @lut only has 100 elements), the lut is padded out
  * by copying the last element. Overflows are reported at the end of
  * computation.
  * If @lut is too large, extra values are ignored.
@@ -801,7 +801,7 @@ vips_maplut_init(VipsMaplut *maplut)
  * the output will have the same number of bands as @lut.
  *
  * ::: tip "Optional arguments"
- *     * @band: %gint, apply one-band @lut to this band of @in
+ *     * @band: `gint`, apply one-band @lut to this band of @in
  *
  * ::: seealso
  *     [method@Image.hist_find], [ctor@Image.identity].

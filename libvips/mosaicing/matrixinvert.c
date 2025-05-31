@@ -109,7 +109,7 @@ vips_matrixinvert_dispose(GObject *gobject)
  *   PRESS, W. et al, 1992.  Numerical Recipes in C; The Art of Scientific
  *   Computing, 2nd ed.  Cambridge: Cambridge University Press, pp. 43-50.
  *
- * Returns: the decomposed matrix on success, or NULL on error.
+ * Returns: the decomposed matrix on success, or `NULL` on error.
  */
 static VipsImage *
 lu_decomp(VipsImage *mat)
@@ -462,7 +462,7 @@ vips_matrixinvert_init(VipsMatrixinvert *matrix)
  * vips_matrixinvert: (method)
  * @m: matrix to invert
  * @out: (out): output matrix
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * This operation calculates the inverse of the matrix represented in @m.
  * The scale and offset members of the input matrix are ignored.

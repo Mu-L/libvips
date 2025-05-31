@@ -70,14 +70,12 @@ vips_hough_line_build(VipsObject *object)
 	VipsHoughLine *hough_line = (VipsHoughLine *) object;
 	int width = hough_line->width;
 
-	int i;
-
 	if (!(hough_line->sin = VIPS_ARRAY(object, 2 * width, double)))
 		return -1;
 
 	/* Map width to 180 degrees, width * 2 to 360.
 	 */
-	for (i = 0; i < 2 * width; i++)
+	for (int i = 0; i < 2 * width; i++)
 		hough_line->sin[i] = sin(2 * VIPS_PI * i / (2 * width));
 
 	if (VIPS_OBJECT_CLASS(vips_hough_line_parent_class)->build(object))
@@ -107,22 +105,26 @@ vips_hough_line_vote(VipsHough *hough, VipsImage *accumulator, int x, int y)
 {
 	VipsHoughLine *hough_line = (VipsHoughLine *) hough;
 	VipsStatistic *statistic = (VipsStatistic *) hough;
-	double xd = (double) x / statistic->ready->Xsize;
-	double yd = (double) y / statistic->ready->Ysize;
+
+	// normalise (x, y) to diagonal size of input image
+	int xs = statistic->ready->Xsize;
+	int ys = statistic->ready->Ysize;
+	double d = sqrt(xs * xs + ys * ys);
+	double xd = (double) x / d;
+	double yd = (double) y / d;
+
+	// size of hough space
 	int width = hough_line->width;
 	int height = hough_line->height;
 	guint *data = (guint *) accumulator->data;
 
-	int i;
-
-	for (i = 0; i < width; i++) {
+	for (int i = 0; i < width; i++) {
 		int i90 = i + width / 2;
 		double r = xd * hough_line->sin[i90] + yd * hough_line->sin[i];
-		int ri = height * r;
+		int ri = (r + 1) * (height / 2.0);
 
-		if (ri >= 0 &&
-			ri < height)
-			data[i + ri * width] += 1;
+		g_assert(ri >= 0 && ri < height);
+		data[i + ri * width] += 1;
 	}
 }
 
@@ -169,7 +171,7 @@ vips_hough_line_init(VipsHoughLine *hough_line)
  * vips_hough_line: (method)
  * @in: input image
  * @out: (out): output image
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Find the line Hough transform for @in. @in must have one band. @out has one
  * band, with pixels being the number of votes for that line. The X dimension
@@ -180,8 +182,8 @@ vips_hough_line_init(VipsHoughLine *hough_line)
  * that is, how accurate the line determination should be.
  *
  * ::: tip "Optional arguments"
- *     * @width: horizontal size of parameter space
- *     * @height: vertical size of parameter space
+ *     * @width: `gint`, horizontal size of parameter space
+ *     * @height: `gint`, vertical size of parameter space
  *
  * ::: seealso
  *     [method@Image.hough_circle].

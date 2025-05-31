@@ -263,7 +263,7 @@ vips_hough_circle_init(VipsHoughCircle *hough_circle)
  * vips_hough_circle: (method)
  * @in: input image
  * @out: (out): output image
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Find the circular Hough transform of an image. @in must be one band, with
  * non-zero pixels for image edges. @out is three-band, with the third channel
@@ -282,9 +282,9 @@ vips_hough_circle_init(VipsHoughCircle *hough_circle)
  * int @out) by a factor of three as well.
  *
  * ::: tip "Optional arguments"
- *     * @scale: scale down dimensions by this much
- *     * @min_radius: smallest radius to search for
- *     * @max_radius: largest radius to search for
+ *     * @scale: `gint`, scale down dimensions by this much
+ *     * @min_radius: `gint`, smallest radius to search for
+ *     * @max_radius: `gint`, largest radius to search for
  *
  * ::: seealso
  *     [method@Image.hough_line].

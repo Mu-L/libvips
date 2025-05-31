@@ -381,7 +381,7 @@ vips_text_autofit(VipsText *text)
 static void *
 vips_text_init_once(void *client)
 {
-	vips_text_fontmap = pango_cairo_font_map_new();;
+	vips_text_fontmap = pango_cairo_font_map_new();
 	vips_text_fontfiles = g_hash_table_new(g_str_hash, g_str_equal);
 
 	return NULL;
@@ -424,17 +424,16 @@ vips_text_build(VipsObject *object)
 
 #ifdef HAVE_FONTCONFIG
 	if (text->fontfile &&
-		!g_hash_table_lookup(vips_text_fontfiles, text->fontfile)) {
+		!g_hash_table_contains(vips_text_fontfiles, text->fontfile)) {
 		/* This can fail if you eg. add the same font from two
 		 * different files. Just warn.
 		 */
 		if (!FcConfigAppFontAddFile(NULL,
 				(const FcChar8 *) text->fontfile))
-			g_warning(_("unable to load fontfile \"%s\""),
+			g_warning("unable to load fontfile \"%s\"",
 				text->fontfile);
 		g_hash_table_insert(vips_text_fontfiles,
-			text->fontfile,
-			g_strdup(text->fontfile));
+			g_strdup(text->fontfile), NULL);
 
 		/* We need to inform that pango should invalidate its
 		 * fontconfig cache whenever any changes are made.
@@ -654,7 +653,7 @@ vips_text_init(VipsText *text)
  * vips_text:
  * @out: (out): output image
  * @text: utf-8 text string to render
- * @...: %NULL-terminated list of optional named arguments
+ * @...: `NULL`-terminated list of optional named arguments
  *
  * Draw the string @text to an image.
  *
@@ -704,17 +703,17 @@ vips_text_init(VipsText *text)
  * several [ctor@Image.text].
  *
  * ::: tip "Optional arguments"
- *     * @font: %gchararray, font to render with
- *     * @fontfile: %gchararray, load this font file
- *     * @width: %gint, image should be no wider than this many pixels
- *     * @height: %gint, image should be no higher than this many pixels
- *     * @align: #VipsAlign, set justification alignment
- *     * @justify: %gboolean, justify lines
- *     * @dpi: %gint, render at this resolution
- *     * @autofit_dpi: %gint, read out auto-fitted DPI
- *     * @rgba: %gboolean, enable RGBA output
- *     * @spacing: %gint, space lines by this in points
- *     * @wrap: #VipsTextWrap, wrap lines on characters or words
+ *     * @font: `gchararray`, font to render with
+ *     * @fontfile: `gchararray`, load this font file
+ *     * @width: `gint`, image should be no wider than this many pixels
+ *     * @height: `gint`, image should be no higher than this many pixels
+ *     * @align: [enum@Align], set justification alignment
+ *     * @justify: `gboolean`, justify lines
+ *     * @dpi: `gint`, render at this resolution
+ *     * @autofit_dpi: `gint`, output, auto-fitted DPI
+ *     * @rgba: `gboolean`, enable RGBA output
+ *     * @spacing: `gint`, space lines by this in points
+ *     * @wrap: [enum@TextWrap], wrap lines on characters or words
  *
  * ::: seealso
  *     [func@Image.bandjoin], [func@Image.composite].
